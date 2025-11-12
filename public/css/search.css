@@ -1,0 +1,248 @@
+/* ===== RESET & BASE ===== */
+* {
+    box-sizing: border-box;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #000;
+    background: #fff;
+    overflow-x: hidden;
+}
+
+/* ===== SEARCH PAGE CONTAINER (La Modale devient le Contenu Principal de la Page) ===== */
+.search-page-container {
+    width: 100%;
+    min-height: 100vh;
+    background: white;
+    padding-bottom: 50px;
+}
+
+.search-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ===== HEADER (En-tête de la page de recherche) ===== */
+.search-header {
+    display: flex;
+    justify-content: flex-start; /* Aligné à gauche après avoir retiré le bouton de fermeture */
+    align-items: center;
+    padding: 10px 0 20px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.search-header .logo {
+    font-size: 24px;
+    letter-spacing: 2px;
+    font-weight: 600;
+    color: #000;
+    margin: 0;
+}
+
+
+/* ===== SEARCH CONTENT (Section principale) ===== */
+.search-content {
+    padding: 20px 0;
+}
+
+/* Champ de recherche principal */
+.search-input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #4bcef3;
+    padding: 8px 15px;
+    margin-bottom: 20px;
+    max-width: 650px;
+    margin-left: auto; /* Centrage */
+    margin-right: auto; /* Centrage */
+    border-radius: 35px;
+}
+
+.search-input-wrapper svg {
+    margin-right: 15px;
+    width: 28px;
+    height: 28px;
+    fill: #4bcef3;
+}
+
+.search-input-lg {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    font-size: 18px;
+    padding: 5px 0;
+    color: #4bcef3;
+}
+
+.search-input-lg::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+/* Recherches populaires */
+.popular-searches {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.popular-searches h3 {
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.popular-searches .tags {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0;
+}
+
+.popular-searches .tags a {
+    text-decoration: none;
+    color: #000;
+    font-size: 15px;
+    border-right: 1px solid #d0d0d0;
+    padding: 0 10px;
+    transition: color 0.2s;
+    line-height: 1;
+}
+.popular-searches .tags a:last-child {
+    border-right: none;
+}
+.popular-searches .tags a:first-child {
+    padding-left: 0;
+}
+.popular-searches .tags a:hover {
+    color: #777;
+}
+
+/* Sections Inspirations/Produits */
+.inspirations-section h2 {
+    font-size: 15px;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    color: #000;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); 
+    gap: 30px;
+    margin-bottom: 40px;
+    justify-content: center; 
+}
+
+/* Style de la carte produit */
+.product-card {
+    position: relative;
+    padding: 0;
+    cursor: pointer;
+    text-align: center;
+}
+
+.product-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.product-image-wrapper img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.custom-badge {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: #fff;
+    color: #000;
+    font-size: 10px;
+    padding: 3px 6px;
+    font-weight: 500;
+    opacity: 0.9;
+    letter-spacing: 0.5px;
+}
+
+.product-info {
+    text-align: center;
+}
+.product-info p {
+    margin: 2px 0;
+    font-size: 13px;
+    color: #000;
+}
+
+.product-name {
+    font-weight: 400;
+}
+
+.product-price {
+    font-weight: 600;
+}
+
+.wishlist-btn {
+    position: absolute;
+    top: 5px;
+    right: 0px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    z-index: 10;
+    opacity: 0.8;
+}
+
+.wishlist-btn svg {
+    fill: #000;
+    transition: fill 0.2s;
+}
+.wishlist-btn:hover svg {
+    fill: #4bcef3;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+    .product-grid {
+        grid-template-columns: repeat(4, 1fr); 
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+    .search-input-wrapper {
+        max-width: 100%;
+    }
+    .search-input-lg {
+        font-size: 16px;
+    }
+    .popular-searches .tags a {
+        font-size: 14px;
+        padding: 0 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .product-info p {
+        font-size: 12px;
+    }
+}
