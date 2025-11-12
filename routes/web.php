@@ -1,18 +1,23 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 
 
 
 Route::get('/', [HomeController::class, 'index']);
-
+Route::get('/detailsProduct/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/search', function () {
     return view('search');
 });
 
+Route::get('/cart/count', function () {
+    $count = count(session('cart', []));
+    return response()->json(['count' => $count]);
+});
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

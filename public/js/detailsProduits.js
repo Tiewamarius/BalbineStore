@@ -1,124 +1,128 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- État et Sélecteurs ---
-    const isUserAuthenticated = false; 
-    const header = document.querySelector('.hero-header');
-    const scrollThreshold = 100;
 
-    const menuToggle = document.getElementById('menuToggle');
-    const loginToggle = document.getElementById('loginToggle'); 
-    const contactAdvisorLink = document.getElementById('contactAdvisorLink');
-    const contactLinkDesktop = document.getElementById('contactLinkDesktop');
-
-    const mobileMenu = document.getElementById('mobileMenu');
-    const contactSidebar = document.getElementById('contactSidebar');
-    const loginSidebar = document.getElementById('loginSidebar');
-    
-    const closeMenu = document.getElementById('closeMenu');
-    const closeContactSidebar = document.getElementById('closeContactSidebar');
-    const closeLoginSidebar = document.getElementById('closeLoginSidebar');
-    const overlay = document.getElementById('overlay');
-    const body = document.body;
-    
-    // Vues Connexion/Inscription
-    const loginView = document.getElementById('loginView');
-    const registerView = document.getElementById('registerView');
-    const switchToRegisterBtn = loginSidebar ? loginSidebar.querySelector('.switch-to-register') : null;
-    const switchToLoginBtn = loginSidebar ? loginSidebar.querySelector('.switch-to-login') : null;
-    const loginSidebarTitle = document.getElementById('loginSidebarTitle');
-    const passwordToggles = loginSidebar ? loginSidebar.querySelectorAll('.password-toggle') : [];
-
-    // --- Fonctions Modales (Ouverture/Fermeture) ---
-
-    function openModal(modalToOpen) {
-        mobileMenu.classList.remove('active');
-        contactSidebar.classList.remove('active');
-        loginSidebar.classList.remove('active');
-
-        modalToOpen.classList.add('active');
-        overlay.classList.add('active');
-        body.classList.add('modal-open');
-    }
-
-    function closeAllModals() {
-        mobileMenu.classList.remove('active');
-        contactSidebar.classList.remove('active');
-        loginSidebar.classList.remove('active');
-        overlay.classList.remove('active');
-        body.classList.remove('modal-open');
-    }
-
-    // --- Événements d'ouverture ---
-    if (menuToggle) menuToggle.addEventListener('click', () => openModal(mobileMenu));
-    
-    if (loginToggle) {
-        loginToggle.addEventListener('click', () => {
-            if (!isUserAuthenticated) {
-                // S'assurer que la vue de connexion est la première affichée
-                switchAuthView('login'); 
-                openModal(loginSidebar);
-            } else {
-                // Logique pour utilisateur connecté (ex: rediriger vers profil)
-                console.log('Utilisateur connecté. Afficher le profil.');
-            }
+    /* === 1. MINIATURES === */
+    const mainImg = document.querySelector('.main-image');
+    const thumbs = document.querySelectorAll('.thumb');
+    if (mainImg && thumbs.length) {
+        thumbs.forEach(t => {
+            t.addEventListener('click', () => {
+                mainImg.src = t.src;
+                thumbs.forEach(x => x.classList.remove('active'));
+                t.classList.add('active');
+            });
         });
     }
 
-    [contactLinkDesktop, contactAdvisorLink].forEach(link => {
-        if (link) link.addEventListener('click', (e) => {
-            e.preventDefault(); 
-            openModal(contactSidebar);
+    /* === 2. VOIR PLUS / VOIR MOINS === */
+    const viewBtn = document.querySelector('.view-more-btn');
+    const desc = document.querySelector('.product-description p');
+    if (viewBtn && desc) {
+        viewBtn.addEventListener('click', () => {
+            desc.classList.toggle('expanded');
+            viewBtn.textContent = desc.classList.contains('expanded') ? 'Voir moins' : 'Voir plus';
+        });
+    }
+
+    /* === 3. ACCORDÉONS === */
+    document.querySelectorAll('.accordion-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const content = header.nextElementSibling;
+            const isOpen = content.classList.contains('open');
+            document.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('open'));
+            if (!isOpen) content.classList.add('open');
         });
     });
 
-    // --- Événements de fermeture ---
-    if (closeMenu) closeMenu.addEventListener('click', closeAllModals);
-    if (closeContactSidebar) closeContactSidebar.addEventListener('click', closeAllModals);
-    if (closeLoginSidebar) closeLoginSidebar.addEventListener('click', closeAllModals);
-    if (overlay) overlay.addEventListener('click', closeAllModals);
-    
-    
-    // --- LOGIQUE LOGIN/REGISTER (Bascule des vues) ---
-    function switchAuthView(view) {
-        if (!loginView || !registerView || !loginSidebarTitle) return;
+    /* === 4. PANIER (AJAX + CONTRÔLE QUANTITÉ) === */
+    const cartBtn = document.querySelector('.add-to-cart-btn');
+    const cartCount = document.getElementById('cartCount');
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-        loginView.classList.remove('active');
-        registerView.classList.remove('active');
-
-        if (view === 'register') {
-            registerView.classList.add('active');
-            loginSidebarTitle.textContent = "Création de compte";
-        } else {
-            loginView.classList.add('active');
-            loginSidebarTitle.textContent = "Votre Adresse Email";
+    // 🧩 Fonction utilitaire : mise à jour du badge panier
+    const updateCartBadge = async () => {
+        try {
+            const res = await fetch('/cart/count');
+            if (res.ok) {
+                const data = await res.json();
+                if (cartCount) cartCount.textContent = data.count;
+            }
+        } catch (err) {
+            console.error('Erreur de mise à jour du badge panier:', err);
         }
-    }
+    };
 
-    if (switchToRegisterBtn) switchToRegisterBtn.addEventListener('click', () => switchAuthView('register'));
-    if (switchToLoginBtn) switchToLoginBtn.addEventListener('click', () => switchAuthView('login'));
+    // 🧩 Fonction AJAX pour mise à jour du panier
+    const updateCart = async (url, body = null) => {
+        return await fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrf,
+                'Content-Type': 'application/json'
+            },
+            body: body ? JSON.stringify(body) : null
+        });
+    };
 
-    // --- LOGIQUE AFFICHER/MASQUER MOT DE PASSE ---
-    passwordToggles.forEach(toggle => {
-        toggle.addEventListener('click', () => {
-            const passwordInput = toggle.closest('.password-field').querySelector('input[type="password"], input[type="text"]');
-            
-            if (passwordInput) {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                
-                // Optionnel: Mettre à jour l'icône/le style si l'icône SVG change
+    // === 4.1 Bouton “Ajouter au panier” ===
+    if (cartBtn) {
+        cartBtn.addEventListener('click', async e => {
+            const id = e.target.dataset.id;
+
+            try {
+                const response = await updateCart(`/cart/add/${id}`, { quantity: 1 });
+
+                if (!response.ok) {
+                    alert("Erreur lors de l'ajout au panier");
+                    return;
+                }
+
+                // ✅ Masquer le bouton et créer le contrôle quantité
+                cartBtn.style.display = 'none';
+                const quantityControl = document.createElement('div');
+                quantityControl.className = 'quantity-control';
+                quantityControl.innerHTML = `
+                    <button class="decrease">−</button>
+                    <span class="quantity">1</span>
+                    <button class="increase">+</button>
+                `;
+                cartBtn.parentNode.insertBefore(quantityControl, cartBtn.nextSibling);
+
+                const qtyDisplay = quantityControl.querySelector('.quantity');
+                const decreaseBtn = quantityControl.querySelector('.decrease');
+                const increaseBtn = quantityControl.querySelector('.increase');
+
+                // 🔄 Mise à jour du badge
+                updateCartBadge();
+
+                // ➕ Incrémenter
+                increaseBtn.addEventListener('click', async () => {
+                    let qty = parseInt(qtyDisplay.textContent) + 1;
+                    qtyDisplay.textContent = qty;
+                    await updateCart(`/cart/update/${id}`, { quantity: qty });
+                    updateCartBadge();
+                });
+
+                // ➖ Décrémenter
+                decreaseBtn.addEventListener('click', async () => {
+                    let qty = parseInt(qtyDisplay.textContent);
+                    if (qty > 1) {
+                        qty--;
+                        qtyDisplay.textContent = qty;
+                        await updateCart(`/cart/update/${id}`, { quantity: qty });
+                        updateCartBadge();
+                    } else {
+                        // Supprimer du panier
+                        quantityControl.remove();
+                        cartBtn.style.display = 'inline-block';
+                        await updateCart(`/cart/remove/${id}`);
+                        updateCartBadge();
+                    }
+                });
+
+            } catch (err) {
+                console.error(err);
+                alert('Erreur réseau');
             }
         });
-    });
-
-    // --- LOGIQUE SCROLL DU HEADER (Fixed Header) ---
-    function checkScroll() {
-        if (window.scrollY > scrollThreshold) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
     }
-
-    window.addEventListener('scroll', checkScroll);
-    checkScroll();
 });

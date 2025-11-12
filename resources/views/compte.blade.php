@@ -6,12 +6,7 @@
 @endpush
 
 
-@section('content')
-<!-- BANNIÈRE -->
-<section class="banner">
-    <img src="{{ asset('images/2021-12-produits-menagers-1536x959.jpg') }}" alt="Bannière">
-    <div class="user-badge">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
-</section>
+
 
 <!-- MENU SECONDAIRE -->
 <nav class="sub-menu" id="subMenu">
@@ -24,7 +19,6 @@
 </nav>
 
 
-<!-- CONTENU PRINCIPAL -->
 <!-- CONTENU PRINCIPAL -->
 <main class="compte-content">
     <!-- Onglet : Aperçu -->
@@ -262,5 +256,3 @@
     });
 </script>
 @endpush
-
-@endsection

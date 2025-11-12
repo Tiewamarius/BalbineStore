@@ -12,6 +12,21 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+    public function show($id)
+    {
+        $product = Products::with(['images', 'categories'])
+            ->findOrFail($id);
+
+        // Produits complémentaires (même catégorie, aléatoires)
+        $relatedProducts = Products::with(['images' => fn($q) => $q->where('is_main', true)])
+            ->where('categories_id', $product->categories_id)
+            ->where('id', '!=', $product->id)
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+
+        return view('detailsProduits', compact('product', 'relatedProducts'));
+    }
 
     public function create()
     {
@@ -30,7 +45,7 @@ class ProductController extends Controller
             'discount_price'  => 'nullable|numeric|min:0',
             'stock'           => 'required|integer|min:0',
             'unit'            => 'nullable|string|max:50',
-            'category_id'     => 'required|exists:categories,id',
+            'categories_id'     => 'required|exists:categories,id',
             'brand_id'        => 'nullable|exists:brands,id',
             'is_active'       => 'boolean',
             'images.*'        => 'image|max:2048',
@@ -39,7 +54,7 @@ class ProductController extends Controller
 
         // 🔹 Création du produit
         $product = Products::create([
-            'category_id'    => $validated['category_id'],
+            'categories_id'    => $validated['categories_id'],
             'brand_id'       => $validated['brand_id'] ?? null,
             'name'           => $validated['name'],
             'slug'           => $validated['slug'] ?? Str::slug($validated['name']),
@@ -79,7 +94,7 @@ class ProductController extends Controller
             'discount_price'  => 'nullable|numeric|min:0',
             'stock'           => 'required|integer|min:0',
             'unit'            => 'nullable|string|max:50',
-            'category_id'     => 'required|exists:categories,id',
+            'categories_id'     => 'required|exists:categories,id',
             'brand_id'        => 'nullable|exists:brands,id',
             'is_active'       => 'boolean',
             'images.*'        => 'image|max:2048',
@@ -89,7 +104,7 @@ class ProductController extends Controller
 
         // 🔹 Mise à jour des infos du produit
         $product->update([
-            'category_id'    => $validated['category_id'],
+            'categories_id'    => $validated['categories_id'],
             'brand_id'       => $validated['brand_id'] ?? null,
             'name'           => $validated['name'],
             'slug'           => $validated['slug'] ?? Str::slug($validated['name']),
