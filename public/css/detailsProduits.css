@@ -288,8 +288,10 @@ a:hover {
     margin-bottom: 15px;
 }
 
-.contact-advisor-link {
-    display: block;
+/* Masquer / afficher avec transition */
+.contact-advisor-link,
+.panier-advisor-link {
+    display: block; /* par défaut */
     text-align: center;
     padding: 15px;
     border: 1px solid #000;
@@ -297,6 +299,19 @@ a:hover {
     font-weight: 600;
     margin-bottom: 30px;
     color: #000;
+
+    transition: all 0.3s ease;
+    opacity: 1;
+    height: auto;
+    overflow: hidden;
+}
+
+/* Masquer */
+.hidden {
+    opacity: 0;
+    height: 0;
+    padding: 0;
+    margin: 0 0 10px 0; /* conserve un petit espace si nécessaire */
 }
 
 .product-description p {
@@ -410,12 +425,12 @@ a:hover {
 .quantity-control {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-top: 10px;
+    gap: 10px; 
+    margin-bottom: 10px;
 }
 
 .quantity-control button {
-    background-color: #f7941d;
+    background-color: #010101;
     border: none;
     color: white;
     font-size: 24px;
@@ -428,7 +443,7 @@ a:hover {
 }
 
 .quantity-control button:hover {
-    background-color: #e6830d;
+    background-color: #000000;
 }
 
 .quantity-control span {
@@ -438,3 +453,28 @@ a:hover {
     width: 30px;
     text-align: center;
 }
+  /* Toast notification */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #3ce104;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    z-index: 9999;
+}
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Animation bouton ajout */
+.add-to-cart-btn.added {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+

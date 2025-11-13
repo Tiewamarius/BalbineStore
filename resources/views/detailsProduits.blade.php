@@ -3,11 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $product->name }} - BALBINE STORE</title>
     <link rel="icon" type="image/png" href="{{ asset('images/cropped-logo-odedis-store-32x32.Jpg') }}">
     <link rel="stylesheet" href="{{ asset('css/detailsProduits.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
+    <!-- <link rel="stylesheet" href="{{ asset('css/welcome.css') }}"> -->
 </head>
 
 <body>
@@ -111,8 +113,11 @@
             <h1 class="product-name">{{ $product->name }}</h1>
             <p class="product-price">{{ number_format($product->price, 0, ',', ' ') }} XOF</p>
 
-            <button class="add-to-cart-btn" data-id="{{ $product->id }}">Ajouter au panier</button>
-            <a href="#" class="contact-advisor-link">Contacter un conseiller</a>
+            <div class="cart-quantity-wrapper" data-id="{{ $product->id }}">
+                <button class="add-to-cart-btn">Ajouter au panier</button>
+            </div>
+            <!-- <a href="#" class="contact-advisor-link">Contacter un conseiller</a> -->
+            <a href="#" id='btnVoirpanier' class="panier-advisor-link">Voir panier</a>
 
             <div class="product-description">
                 <p>{{ Str::limit($product->description, 300, '...') }}</p>

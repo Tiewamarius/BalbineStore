@@ -9,6 +9,7 @@ class Carts extends Model
 {
     use HasFactory;
 
+    protected $table = 'carts';
     protected $fillable = [
         'user_id',
         'status', // active, pending, completed
