@@ -5,12 +5,12 @@
             <button id="closeMenu">✕</button>
         </header>
         <ul>
-            <li><a href="#">Produits d'entretien</a></li>
-            <li><a href="#">Produits professionnels</a></li>
-            <li><a href="#">Matériel</a></li>
-            <li><a href="#">Machines</a></li>
-            <li><a href="#">Hygiène & sanitaires</a></li>
-            <li><a href="#">Écologiques</a></li>
+            <li><a href="#">Nettoyages & Entretiens Lacaux</a></li>
+            <li><a href="#">Traitement Phytosanitaire</a></li>
+            <li><a href="#">Paysagiste & Jardinage</a></li>
+            <li><a href="#">Parfumage d'Espace</a></li>
+            <li><a href="https://www.balbine.net" blank>LES SERVICES BALBINE.NET</a></li>
+            <!-- <li><a href="#">Écologiques</a></li> -->
         </ul>
         <div class="footer">
             <p>Besoin d'aide ?</p>
@@ -311,10 +311,11 @@
             <div class="cart-items">
                 @foreach($cart->items as $item)
                 <div class="cart-item">
-                    <img src="{{ asset('storage/' . $item->product->image) }}" alt="{{ $item->product->name }}" class="cart-item-img">
+                    <img src=" {{ asset('storage/' . $product->images->first()->image_path) }}"
+                        alt="{{ $product->name }}" alt=" {{ $item->product->name }}" class="cart-item-img">
                     <div class="cart-item-info">
                         <h4 class="cart-item-name">{{ $item->product->name }}</h4>
-                        <p class="cart-item-price">{{ number_format($item->unit_price, 0, ',', ' ') }} F</p>
+                        <p class="cart-item-price">{{ number_format($item->unit_price, 0, ',', ' ') }} XOF</p>
                         <div class="cart-item-qty">
                             <button class="qty-btn decrease" data-id="{{ $item->product->id }}">−</button>
                             <span class="quantity">{{ $item->quantity }}</span>
@@ -341,3 +342,109 @@
             @endguest
         </div>
     </aside>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const cartSidebar = document.getElementById('cartSidebar');
+            const cartToggle = document.getElementById('cartToggle');
+            const closeCart = document.getElementById('closeCartSidebar');
+            const cartCount = document.getElementById('cartCount');
+
+            /* ------------------------------
+                1. OUVERTURE / FERMETURE
+            ------------------------------ */
+            if (cartToggle) {
+                cartToggle.addEventListener('click', () => {
+                    cartSidebar.classList.add('active');
+                });
+            }
+
+            if (closeCart) {
+                closeCart.addEventListener('click', () => {
+                    cartSidebar.classList.remove('active');
+                });
+            }
+
+
+            /* ---------------------------------------
+                2. AJOUTER AU PANIER (add-to-cart)
+            --------------------------------------- */
+            document.addEventListener('click', async e => {
+                if (e.target.classList.contains('add-to-cart')) {
+
+                    const id = e.target.dataset.id;
+
+                    const res = await fetch(`/cart/add/${id}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrf,
+                        }
+                    });
+
+                    const data = await res.json();
+
+                    if (data.success && cartCount) {
+                        cartCount.textContent = data.count;
+                    }
+                }
+            });
+
+
+            /* ---------------------------------------
+                3. AUGMENTER LA QUANTITÉ (+)
+            --------------------------------------- */
+            document.addEventListener('click', async e => {
+                if (e.target.classList.contains('increase')) {
+
+                    const productId = e.target.dataset.id;
+                    const qtySpan = e.target.parentElement.querySelector(".quantity");
+
+                    const res = await fetch(`/cart/increase`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": csrf
+                        },
+                        body: JSON.stringify({
+                            product_id: productId
+                        })
+                    });
+
+                    const data = await res.json();
+
+                    qtySpan.textContent = data.quantity;
+                    cartCount.textContent = data.cart_total;
+                }
+            });
+
+
+            /* ---------------------------------------
+                4. DIMINUER LA QUANTITÉ (–)
+            --------------------------------------- */
+            document.addEventListener('click', async e => {
+                if (e.target.classList.contains('decrease')) {
+
+                    const productId = e.target.dataset.id;
+                    const qtySpan = e.target.parentElement.querySelector(".quantity");
+
+                    const res = await fetch(`/cart/decrease`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": csrf
+                        },
+                        body: JSON.stringify({
+                            product_id: productId
+                        })
+                    });
+
+                    const data = await res.json();
+
+                    qtySpan.textContent = data.quantity;
+                    cartCount.textContent = data.cart_total;
+                }
+            });
+
+        });
+    </script>

@@ -36,8 +36,9 @@ a:hover {
     align-items: center;
     padding: 20px 40px;
     transition: background-color 0.4s ease, color 0.4s ease;
+    
     background: #fff;
-    color: var(--color-light-grey);
+    color: var(--color-primary);
 }
 
 .hero-headerDetail.scrolled {
@@ -57,7 +58,7 @@ a:hover {
 .hero-headerDetail:hover {
     background: #fff;
     color: var(--color-primary);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(208, 35, 35, 0.1);
 }
 
 .hero-headerDetail:hover svg {
@@ -65,6 +66,13 @@ a:hover {
 }
 
 .hero-headerDetail:hover a {
+    color: var(--color-primary);
+}
+.hero-headerDetail svg {
+    fill: var(--color-primary);
+}
+
+ a {
     color: var(--color-primary);
 }
 

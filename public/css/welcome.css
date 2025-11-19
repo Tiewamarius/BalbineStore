@@ -1118,8 +1118,203 @@
 }
 
 
+/* =========================================================
+   1. SIDEBAR PANIER — STRUCTURE DE BASE
+========================================================= */
+/* cart-sidebar {
+    position: fixed;
+    top: 0;
+    right: -380px;
+    width: 360px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: -4px 0 20px rgba(0,0,0,0.12);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    transition: right .35s ease;
+    z-index: 9999;
+}
+.cart-sidebar.active {
+    right: 0;
+} */
+
+/* =========================================================
+   2. HEADER DU PANIER
+========================================================= */
+.contact-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 22px;
+    background: #111;
+    color: #fff;
+}
+
+.contact-header .contact-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    font-size: 28px;
+    color: #fff;
+    cursor: pointer;
+    transition: transform .2s;
+}
+.close-btn:hover {
+    transform: rotate(90deg);
+}
+
+/* =========================================================
+   3. CORPS DU PANIER (contenu + état vide)
+========================================================= */
+.contact-body {
+    padding: 18px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.not-logged,
+.empty-cart {
+    text-align: center;
+    padding: 50px 10px;
+}
+
+.auth-btn {
+    margin-top: 10px;
+    padding: 10px 18px;
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: .3s;
+}
+.auth-btn:hover {
+    background: #333;
+}
+
+/* =========================================================
+   4. ITEM DU PANIER
+========================================================= */
+.cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.cart-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    background: #f8f8f8;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.07);
+}
+
+.cart-item-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.cart-item-info {
+    flex: 1;
+}
+
+.cart-item-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.cart-item-price {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 6px;
+}
+
+/* =========================================================
+   5. BOUTONS QUANTITÉ
+========================================================= */
+.cart-item-qty {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.qty-btn {
+    width: 28px;
+    height: 28px;
+    background: #111;
+    color: #fff;
+    border-radius: 6px;
+    border: none;
+    font-size: 17px;
+    cursor: pointer;
+    transition: .2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.qty-btn:hover {
+    background: #333;
+}
+
+.quantity {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* =========================================================
+   6. FOOTER DU PANIER
+========================================================= */
+.cart-footer {
+    border-top: 1px solid #eee;
+    padding: 18px;
+    background: #fff;
+}
+
+.cart-total {
+    font-size: 17px;
+    margin-bottom: 14px;
+}
+
+.view-cart-btn,
+.checkout-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    transition: .25s;
+}
+
+.view-cart-btn {
+    background: #f0f0f0;
+    color: #111;
+}
+.view-cart-btn:hover {
+    background: #e0e0e0;
+}
+
+.checkout-btn {
+    background: #111;
+    color: #fff;
+}
+.checkout-btn:hover {
+    background: #333;
+}
+
+
 /* ========================================================= */
-/* 📱 RESPONSIVE DESIGN FINAL - Header, Bannière & Produits  */
+/* RESPONSIVE DESIGN FINAL - Header, Bannière & Produits  */
 /* ========================================================= */
 
 /* === TABLETTES (entre 769px et 1024px) === */

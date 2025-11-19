@@ -100,4 +100,9 @@ class User extends Authenticatable implements MustVerifyEmail
             ? asset('storage/' . $this->imageProfil)
             : asset('images/default-avatar.png');
     }
+
+    public function activeCart()
+    {
+        return $this->hasOne(Carts::class)->where('status', 'active');
+    }
 }

@@ -172,4 +172,39 @@ class CartController extends Controller
 
         return response()->json(['success' => true, 'count' => 0]);
     }
+
+
+    public function increase(Request $request)
+    {
+        $item = \App\Models\Cart_Items::where('cart_id', auth()->user()->activeCart->id)
+            ->where('product_id', $request->product_id)
+            ->first();
+
+        if ($item) {
+            $item->quantity += 1;
+            $item->save();
+        }
+
+        return response()->json([
+            'quantity' => $item->quantity,
+            'cart_total' => auth()->user()->activeCart->items->sum('quantity'),
+        ]);
+    }
+
+    public function decrease(Request $request)
+    {
+        $item = Cart_Items::where('cart_id', auth()->user()->activeCart->id)
+            ->where('product_id', $request->product_id)
+            ->first();
+
+        if ($item && $item->quantity > 1) {
+            $item->quantity -= 1;
+            $item->save();
+        }
+
+        return response()->json([
+            'quantity' => $item->quantity,
+            'cart_total' => auth()->user()->activeCart->items->sum('quantity'),
+        ]);
+    }
 }

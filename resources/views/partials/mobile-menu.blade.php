@@ -4,7 +4,7 @@
         <button id="closeMenu">✕</button>
     </header>
     <ul>
-        <li><a href="#">Produits d'entretien</a></li>
+        <li><a href="#">Nettoyages et Entretiens Lacaux</a></li>
         <li><a href="#">Produits professionnels</a></li>
         <li><a href="#">Matériel</a></li>
         <li><a href="#">Machines</a></li>

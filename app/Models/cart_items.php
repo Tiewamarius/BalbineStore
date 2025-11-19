@@ -25,7 +25,7 @@ class Cart_Items extends Model
     // Un article appartient à un panier
     public function cart()
     {
-        return $this->belongsTo(Carts::class);
+        return $this->belongsTo(Carts::class, 'cart_id');
     }
 
     // Un article correspond à un produit

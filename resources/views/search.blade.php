@@ -5,22 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BALBINE STORE - Recherche</title>
-    <link rel="stylesheet" href="css/search.css">
+    <link rel="stylesheet" href="{{ asset('css/search.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/detailsProduits.css') }}">
     <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
-    <script src="js/search.js" defer></script>
+
 </head>
 
 <body>
 
     <div class="search-page-container" id="searchPage">
         <div class="search-container">
-            <header class="search-header">
-                <a href="{{ url('/') }}">
-                    <div class="hero-center">
-                        <h1 class="logo">BALBINE STORE</h1>
-                    </div>
-                </a>
-            </header>
+
+            <!-- Header -->
+            @include('partials.header')
 
             <div class="search-content">
                 <div class="search-input-wrapper">
@@ -90,6 +87,11 @@
             </div>
         </div>
     </div>
+    @include('partials.allModal')
+
+    <script src={{ asset("js/search.js") }} defer></script>
+    <script src="{{ asset('js/detailsProduits.js') }}" defer></script>
+    <script src="{{ asset('js/welcome.js') }}" defer></script>
 </body>
 
 </html>

@@ -25,10 +25,11 @@ class Carts extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Un panier contient plusieurs articles
+
+
     public function items()
     {
-        return $this->hasMany(Cart_Items::class);
+        return $this->hasMany(Cart_Items::class, 'cart_id');
     }
 
     /**
