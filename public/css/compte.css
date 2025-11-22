@@ -353,3 +353,203 @@ footer {
         font-size: 0.9rem;
     }
 }
+
+
+/* ====================================== */
+/* ========== RESPONSIVE 1024px ========= */
+/* ====================================== */
+
+@media (max-width: 1024px) {
+    .compte-content {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    }
+
+    .profil-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .overview-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+}
+
+
+/* ====================================== */
+/* =========== RESPONSIVE 900px ========= */
+/* ====================================== */
+
+@media (max-width: 900px) {
+
+    /* grille profil */
+    .profil-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .profil-title {
+        text-align: center;
+    }
+
+    .profil-container {
+        width: 95%;
+    }
+
+    .birth-date select {
+        width: 32%;
+    }
+}
+
+
+/* ====================================== */
+/* =========== RESPONSIVE 768px ========= */
+/* ====================================== */
+
+@media (max-width: 768px) {
+
+    /* bannière */
+    .banner {
+        height: 200px;
+    }
+
+    .user-badge {
+        width: 50px;
+        height: 50px;
+        font-size: 0.9rem;
+    }
+
+    /* sous-menu */
+    .sub-menu {
+        height: 60px;
+        padding: 0 10px;
+    }
+
+    .sub-menu a {
+        padding: 0.7rem 0.9rem;
+        font-size: 0.85rem;
+    }
+
+    /* cartes */
+    .compte-content {
+        grid-template-columns: 1fr;
+        padding: 0 0.7rem;
+    }
+
+    .card {
+        border-radius: 6px;
+    }
+
+    /* aperçu */
+    .overview-grid {
+        grid-template-columns: 1fr;
+        padding: 0 0.5rem;
+        gap: 1.2rem;
+    }
+
+    .overview-header {
+        margin: 1.5rem 0 2rem;
+    }
+
+    /* profil */
+    .profil-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profil-section,
+    .profil-block {
+        padding: 1.2rem;
+        border-radius: 6px;
+    }
+}
+
+
+/* ====================================== */
+/* =========== RESPONSIVE 600px ========= */
+/* ====================================== */
+
+@media (max-width: 600px) {
+
+    /* bannière */
+    .banner {
+        height: 170px;
+    }
+
+    .user-badge {
+        width: 45px;
+        height: 45px;
+        bottom: -25px;
+        font-size: 0.85rem;
+    }
+
+    /* texte global */
+    .overview-card h3 {
+        font-size: 1rem;
+    }
+
+    .overview-card p {
+        font-size: 0.85rem;
+    }
+
+    .profil-title {
+        font-size: 1.4rem;
+    }
+
+    .btn,
+    .btn-primary,
+    .btn-secondary {
+        font-size: 0.85rem;
+    }
+}
+
+
+/* ====================================== */
+/* =========== RESPONSIVE 480px ========= */
+/* ====================================== */
+
+@media (max-width: 480px) {
+
+    /* bannière */
+    .banner {
+        height: 150px;
+    }
+
+    .user-badge {
+        width: 40px;
+        height: 40px;
+        font-size: 0.8rem;
+        bottom: -20px;
+    }
+
+    /* sous-menu */
+    .sub-menu {
+        height: 55px;
+    }
+
+    .sub-menu a {
+        padding: 0.6rem 0.7rem;
+        font-size: 0.8rem;
+    }
+
+    /* cartes */
+    .card-body {
+        font-size: 0.9rem;
+    }
+
+    .card-header {
+        font-size: 1rem;
+    }
+
+    /* profil */
+    .profil-container {
+        padding: 1.5rem 0;
+    }
+
+    .profil-section input,
+    .profil-section select {
+        padding: 0.6rem;
+    }
+
+    .birth-date select {
+        width: 31%;
+    }
+}
+

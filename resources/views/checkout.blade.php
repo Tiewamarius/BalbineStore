@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>- BALBINE STORE</title>
     <link rel="icon" type="image/png" href="{{ asset('images/cropped-logo-odedis-store-32x32.Jpg') }}">
@@ -17,7 +16,7 @@
             --secondary-color: #6c757d;
             --background-color: #f8f9fa;
             --card-background: #ffffff;
-            --success-color: #0bea3fff;
+            --success-color: #12d3f1df;
             --font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         }
 
@@ -29,7 +28,6 @@
             color: #343a40;
         }
 
-        /* ESPACE POUR LE HEADER FIXE */
         .header-placeholder {
             height: 80px;
             width: 100%;
@@ -154,17 +152,15 @@
 
         <div class="checkout-wrapper">
 
-            <!-- FORMULAIRE -->
             <form id="checkoutForm" action="{{ route('checkout.store') }}" method="POST" class="checkout-form">
                 @csrf
 
-                @if(Auth::check())
                 <h3>Informations personnelles</h3>
+                @if(Auth::check())
                 <p><strong>Nom complet :</strong> {{ Auth::user()->name }}</p>
                 <p><strong>Téléphone :</strong> {{ Auth::user()->phone }}</p>
                 <p><strong>Adresse :</strong> {{ Auth::user()->address }}</p>
                 @else
-                <h3>Informations personnelles</h3>
                 <label>Nom complet</label>
                 <input type="text" name="fullname" required>
 
@@ -185,14 +181,13 @@
                 <button type="submit" class="checkout-btn">Confirmer et payer</button>
             </form>
 
-            <!-- RÉCAPITULATIF -->
             <div class="checkout-summary">
                 <h3>Votre commande</h3>
 
-                @foreach($cart->items as $item)
+                @foreach($cart['items'] as $item)
                 <div class="summary-item">
-                    <span>{{ $item->product->name }}</span>
-                    <span>{{ $item->quantity }} × {{ number_format($item->unit_price, 0, ',', ' ') }} F</span>
+                    <span>{{ $item['product']['name'] }}</span>
+                    <span>{{ $item['quantity'] }} × {{ number_format($item['unit_price'], 0, ',', ' ') }} F</span>
                 </div>
                 @endforeach
 
@@ -200,15 +195,13 @@
 
                 <p class="summary-total">
                     Total :
-                    <strong>{{ number_format($cart->total, 0, ',', ' ') }} F</strong>
+                    <strong>{{ number_format($cart['total'], 0, ',', ' ') }} F</strong>
                 </p>
             </div>
 
         </div>
     </div>
 
-    <script src="{{ asset('js/detailsProduits.js') }}" defer></script>
-    <script src="{{ asset('js/welcome.js') }}" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('checkoutForm');
@@ -229,17 +222,14 @@
                         })
                         .then(res => res.json())
                         .then(data => {
-                            if (!data.order_id) return alert('Erreur lors de la création de la commande.');
+                            if (!data.order_id) return alert(data.error || 'Erreur lors de la création de la commande.');
 
                             const orderId = data.order_id;
                             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
                             const isMobile = /android|iphone|ipad|ipod/i.test(userAgent);
 
-                            if (isMobile) {
-                                window.location.href = `/wave/pay/${orderId}`;
-                            } else {
-                                window.location.href = `/wave/pay/${orderId}`;
-                            }
+                            // Redirection Wave
+                            window.location.href = `/wave/pay/${orderId}`;
                         })
                         .catch(err => {
                             console.error(err);

@@ -102,4 +102,27 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btn) { btn.disabled = true; btn.innerText = 'Veuillez patienter...'; }
         });
     });
+
+
+    // footer scripte
+
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.addEventListener("click", function () {
+
+            // évite l'ouverture en desktop
+            if (window.innerWidth >= 900) return;
+
+            const content = this.nextElementSibling;
+
+            // toggle
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                this.querySelector(".icon").textContent = "+";
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+                this.querySelector(".icon").textContent = "−";
+            }
+        });
+    });
+
 });

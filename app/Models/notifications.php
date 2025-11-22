@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Notifications extends Model
+class notifications extends Model
 {
     use HasFactory;
 
@@ -28,7 +28,7 @@ class Notifications extends Model
     // Une notification appartient à un utilisateur
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(user::class);
     }
 
     /**

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Wishlists extends Model
+class wishlists extends Model
 {
     use HasFactory;
 
@@ -20,15 +20,15 @@ class Wishlists extends Model
     // Une wishlist appartient à un utilisateur
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(user::class);
     }
 
     // Une wishlist contient plusieurs produits
     public function products()
     {
-        return $this->belongsToMany(Products::class, 'wishlist_product')
-            ->withTimestamps();
+        return $this->belongsToMany(products::class, 'wishlist_products', 'wishlist_id', 'product_id');
     }
+
 
     /**
      * Méthodes utilitaires

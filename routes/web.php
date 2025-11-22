@@ -55,14 +55,16 @@ Route::get('/cart/count', function () {
 | Nécessitent que l’utilisateur soit connecté.
 */
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth', ' verified')->group(function () {
     // Tableau de bord
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->middleware(['verified'])->name('dashboard');
 
     // Compte & profil
-    Route::get('/compte', [ProfileController::class, 'compte'])->name('compte');
+    Route::get('/compte', [ProfileController::class, 'compte'])
+        ->middleware('auth')
+        ->name('compte');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

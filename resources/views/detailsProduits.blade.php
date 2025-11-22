@@ -112,6 +112,7 @@
 
     <script src="{{ asset('js/detailsProduits.js') }}" defer></script>
     <script src="{{ asset('js/welcome.js') }}" defer></script>
+    <script src="{{ asset('js/cart.js') }}" defer></script>
 </body>
 
 </html>

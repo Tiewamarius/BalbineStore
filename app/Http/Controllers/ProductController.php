@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 
-use App\Models\Products;
-use App\Models\Categories;
-use App\Models\Brands;
+use App\Models\products;
+use App\Models\categories;
+use App\Models\brands;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -14,7 +14,7 @@ class ProductController extends Controller
 {
     public function show($id)
     {
-        $product = Products::with(['images', 'categories'])
+        $product = products::with(['images', 'categories'])
             ->findOrFail($id);
 
         // Produits complémentaires (même catégorie, aléatoires)
@@ -31,8 +31,8 @@ class ProductController extends Controller
     public function create()
     {
         return view('admin.products.create', [
-            'categories' => Categories::all(),
-            'brands' => Brands::all(),
+            'categories' => categories::all(),
+            'brands' => brands::all(),
         ]);
     }
     public function store(Request $request)
@@ -52,8 +52,8 @@ class ProductController extends Controller
             'main_image'      => 'nullable|integer|min:0', // index de l’image principale
         ]);
 
-        // 🔹 Création du produit
-        $product = Products::create([
+        //  Création du produit
+        $product = products::create([
             'categories_id'    => $validated['categories_id'],
             'brand_id'       => $validated['brand_id'] ?? null,
             'name'           => $validated['name'],
@@ -66,7 +66,7 @@ class ProductController extends Controller
             'is_active'      => $validated['is_active'] ?? true,
         ]);
 
-        // 🔹 Upload des images
+        //  Upload des images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $index => $image) {
                 $path = $image->store('products', 'public');
@@ -84,7 +84,7 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
-        $product = Products::findOrFail($id);
+        $product = products::findOrFail($id);
 
         $validated = $request->validate([
             'name'            => 'required|string|max:255',
@@ -102,7 +102,7 @@ class ProductController extends Controller
             'remove_images'   => 'nullable|array', // IDs des images à supprimer
         ]);
 
-        // 🔹 Mise à jour des infos du produit
+        // Mise à jour des infos du produit
         $product->update([
             'categories_id'    => $validated['categories_id'],
             'brand_id'       => $validated['brand_id'] ?? null,
@@ -116,7 +116,7 @@ class ProductController extends Controller
             'is_active'      => $validated['is_active'] ?? true,
         ]);
 
-        // 🔹 Suppression d’anciennes images si demandé
+        //  Suppression d’anciennes images si demandé
         if ($request->filled('remove_images')) {
             foreach ($request->remove_images as $imageId) {
                 $image = $product->images()->find($imageId);
@@ -127,7 +127,7 @@ class ProductController extends Controller
             }
         }
 
-        // 🔹 Upload de nouvelles images
+        //  Upload de nouvelles images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $index => $image) {
                 $path = $image->store('products', 'public');
@@ -139,7 +139,7 @@ class ProductController extends Controller
             }
         }
 
-        // 🔹 Mise à jour de l’image principale
+        //  Mise à jour de l’image principale
         if ($request->filled('main_image')) {
             $mainIndex = (int)$request->main_image;
 

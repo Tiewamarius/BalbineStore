@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Carts;
-use App\Models\Orders;
-use App\Models\order_Items;
+use App\Models\carts;
+use App\Models\orders;
+use App\Models\order_items;
 
 class CheckoutController extends Controller
 {
     public function index()
     {
-        $cart = Carts::with('items.product')
+        $cart = carts::with('items.product')
             ->where('user_id', auth()->id())
             ->where('status', 'active')
             ->first();
@@ -31,7 +31,7 @@ class CheckoutController extends Controller
             'address' => 'required'
         ]);
 
-        $cart = Carts::with('items.product')
+        $cart = carts::with('items.product')
             ->where('user_id', auth()->id())
             ->where('status', 'active')
             ->first();
@@ -41,7 +41,7 @@ class CheckoutController extends Controller
         }
 
         // Création de la commande
-        $order = Orders::create([
+        $order = orders::create([
             'user_id' => auth()->id(),
             'total' => $cart->total,
             'fullname' => $request->fullname,
@@ -51,7 +51,7 @@ class CheckoutController extends Controller
         ]);
 
         foreach ($cart->items as $item) {
-            order_Items::create([
+            order_items::create([
                 'order_id' => $order->id,
                 'product_id' => $item->product->id,
                 'quantity' => $item->quantity,

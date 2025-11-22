@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use App\Models\products;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
@@ -16,10 +17,35 @@ class ProfileController extends Controller
      */
     public function compte(Request $request): View
     {
-        return view('compte', [
-            'user' => $request->user(),
-        ]);
+        $user = $request->user();
+
+        // Panier actif
+        $cartItems = $user->activeCart
+            ? $user->activeCart->items()->with('product.images')->get()
+            : collect();
+
+        // Commandes de l'utilisateur
+        $orders = $user->orders()->latest()->get();
+
+        // Wishlist
+        $wishlist = $user->wishlist
+            ? $user->wishlist->products()->with('images')->get()
+            : collect();
+
+        // Adresses de livraison
+        $addresses = $user->addresses()->get();
+
+        return view('compte', compact(
+            'user',
+            'cartItems',
+            'orders',
+            'wishlist',
+            'addresses'
+        ));
     }
+
+
+
 
     public function edit(Request $request): View
     {

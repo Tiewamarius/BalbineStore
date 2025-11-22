@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BALBINE STORE</title>
     <link rel="icon" type="image/png" href="{{ asset('images/cropped-logo-odedis-store-32x32.Jpg') }}">
@@ -15,7 +16,7 @@
     <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
 
     <link rel="stylesheet" href="{{ asset('css/search.css') }}">
-    <script src="{{ asset('js/welcome.js') }}" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 </head>
 
@@ -52,9 +53,10 @@
                     </a>
                 </div>
 
-                <a href="{{ url('/') }}">
+                <a href="{{ url('/') }}" class="logo">
                     <div class="hero-center">
-                        <h1 class="logo">BALBINE STORE</h1>
+                        <img src="{{ asset('/Images/logoBalbineSTORE.png') }}" alt="Balbine Store" class="logo-img">
+
                     </div>
                 </a>
 
@@ -69,7 +71,7 @@
                     </span>
 
                     @guest
-                    <span class="icon" id="loginToggle">
+                    <span class="menu-btn" id="loginToggle">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="#e3e3e3">
                             <path
@@ -115,39 +117,123 @@
             </div>
         </div>
     </section>
+
+    <!-- SECTION CATEGORIES -->
     <section class="product-selection-section" id="Categories">
         <h2 class="section-title">Explorez les produits d'entretien de vos espaces</h2>
 
         @if($categories->isEmpty())
         <p class="text-center text-gray-500">Aucune catégorie disponible pour le moment.</p>
         @else
-        <div class="product-grid">
+        <div class="product-grid-categories">
             @foreach($categories as $category)
-            @php
-            // Récupérer la première image disponible
-            $image = optional($category->products->first()?->images->first())->image_path;
-            @endphp
             <div class="product-card">
                 <div class="card-image-container">
-                    <img
-                        src="{{ $image ? asset('storage/' . $image) : asset('images/default-category.jpg') }}"
+                    <img src="{{ $category->slug ? asset('storage/' . $category->slug) : asset('images/produc/default.jpg') }}"
                         alt="{{ $category->name }}"
                         class="product-image">
                 </div>
+
                 <p class="product-label">{{ $category->name }}</p>
+
+                <!-- Icône + bouton animé -->
+                <div class="card-action">
+                    <div class="card-icon">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <a href="#" class="read-more-btn">VOIR PLUS <i class="fas fa-arrow-right rotate-diagonal"></i></a>
+                </div>
             </div>
+
             @endforeach
         </div>
         @endif
     </section>
 
-
     <section class="pubmarketing-section">
         <!-- sectionMarketing -->
         <img src="{{ asset('images/BALBINE-STORE-1--1536x768.jpg') }}" alt="Promotion spéciale" class="pub-image">
     </section>
+
+    <!-- Quelque produit mieux visité-->
     <div class="product-grid">
-        @foreach($products as $product)
+        @foreach($randomProducts as $randomProduct)
+        <a href="{{ url('detailsProduct/' . $randomProduct->id) }}">
+            <div class="product-card">
+                <div class="product-image-wrapper">
+                    <img
+                        src="{{ asset('storage/' . ($randomProduct->images->first()->image_path ?? 'images/default.png')) }}"
+                        alt="{{ $randomProduct->name }}">
+
+                    @if($randomProduct->is_customizable ?? false)
+                    <span class="custom-badge">Personnalisable</span>
+                    @endif
+                </div>
+
+                <div class="product-info">
+                    <p class="product-name">{{ $randomProduct->name }}</p>
+                    <p class="product-price">{{ number_format($randomProduct->price, 0, ',', ' ') }} XOF</p>
+                </div>
+
+                <button class="wishlist-btn" aria-label="Ajouter aux favoris">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000">
+                        <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z" />
+                    </svg>
+                </button>
+            </div>
+        </a>
+        @endforeach
+    </div>
+
+    <!-- SECTIONS PAR CATÉGORIE -->
+    @foreach($categories as $category)
+
+    @php
+    $products = $productsByCategory[$category->name] ?? collect();
+
+    $bannerImages = [
+    'Nettoyages et Entretiens Lacaux' => [
+    'Images/hygiene-locaux-professionnels-desinfectant.jpg',
+    'Images/hygiene-locaux-professionnels-desinfectant.jpg',
+    'Images/hygiene-locaux-professionnels-desinfectant.jpg',
+    ],
+    'Traitement Phytosanitaire' => [
+    'Images/Cleaning-Chemicals-Washroom-Toilet1.jpg',
+    'Images/Cleaning-Chemicals-Washroom-Toilet1.jpg',
+    ],
+    'Paysagisme & Jardinage' => [
+    'Images/csm_2020_Hauert.jpeg',
+    'Images/csm_2020_Hauert.jpeg',
+    'Images/csm_2020_Hauert.jpeg',
+    ],
+    "Parfumage d'Espace" => [
+    'Images/flacons-parfum-table.jpg',
+    'Images/flacons-parfum-table.jpg',
+    'Images/flacons-parfum-table.jpg',
+    ],
+    ];
+
+    // Sécurisation : si slug introuvable → tableau vide
+    $images = $bannerImages[$category->name] ?? ['images/default-banner.jpg'];
+
+    // Récupérer une image au hasard
+    $banner = $images[array_rand($images)];
+    @endphp
+
+    <section class="pubmarketing-section">
+        <img src="{{ asset($banner) }}"
+            alt="{{ $category->name }}"
+            class="pub-image">
+    </section>
+
+    <center>
+        <h2 class="section-title">{{ $category->name }}</h2>
+    </center>
+
+
+    <div class="product-grid">
+
+        @forelse($products as $product)
         <a href="{{ url('detailsProduct/' . $product->id) }}">
             <div class="product-card">
                 <div class="product-image-wrapper">
@@ -172,13 +258,22 @@
                 </button>
             </div>
         </a>
-        @endforeach
+        @empty
+        <p class="no-product">Aucun produit disponible dans cette catégorie.</p>
+        @endforelse
+
     </div>
 
-
+    @endforeach
+    @include('partials.footer')
     <div class="overlay" id="overlay"></div>
 
     @include('partials.allModal')
+
+
+    <script src="{{ asset('js/detailsProduits.js') }}" defer></script>
+    <script src="{{ asset('js/welcome.js') }}" defer></script>
+    <script src="{{ asset('js/cart.js') }}" defer></script>
 
 </body>
 

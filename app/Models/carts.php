@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Carts extends Model
+class carts extends Model
 {
     use HasFactory;
 
@@ -19,17 +19,9 @@ class Carts extends Model
      * Relations
      */
 
-    // Un panier appartient à un utilisateur
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-
-
     public function items()
     {
-        return $this->hasMany(Cart_Items::class, 'cart_id');
+        return $this->hasMany(cartitems::class, 'cart_id');
     }
 
     /**

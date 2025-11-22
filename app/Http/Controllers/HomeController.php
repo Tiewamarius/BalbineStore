@@ -3,37 +3,47 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Categories;
-use App\Models\Products;
+use App\Models\categories;
+use App\Models\products;
 use Carbon\Carbon;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        // Génère une "graine" (seed) qui change toutes les 30 minutes
+        // Génération du seed 30 min
         $now = Carbon::now();
-        $interval = floor($now->minute / 30); // 0 pour 00-29 min, 1 pour 30-59 min
-        $seed = $now->format('YmdH') . $interval; // Exemple : 2025102910_0
+        $interval = floor($now->minute / 30);
+        $seed = $now->format('YmdH') . $interval;
 
-        // 1. Récupération des catégories avec leur image principale
-        $categories = Categories::with(['products.images' => function ($q) {
-            $q->where('is_main', true);
-        }])->get();
+        // Récupération des catégories essentielles (id, name, slug)
+        $categories = categories::select('id', 'name', 'slug')->get();
 
-        // 2. Sélection stable et aléatoire de 4 produits (même pendant 30min)
-        // On mélange avec un "seed" pour avoir une pseudo-randomisation stable
+        // == 1) Produits aléatoires globaux (5 produits) avec seed ==
         srand(crc32($seed));
 
-        $products = Products::with(['images' => function ($q) {
+        $randomProducts = products::with(['images' => function ($q) {
             $q->where('is_main', true);
-        }])->get()
-            ->shuffle()
-            ->take(4);
+        }])
+            ->inRandomOrder()     // utilise le seed
+            ->take(5)
+            ->get();
 
-        srand(); // réinitialise le générateur pour éviter d’impacter ailleurs
+        srand(); // reset
 
-        // 3. Envoi à la vue
-        return view('welcome', compact('categories', 'products'));
+        // == 2) Produits par catégorie ==
+        $productsByCategory = [];
+
+        foreach ($categories as $category) {
+            $productsByCategory[$category->slug] = products::with(['images' => function ($q) {
+                $q->where('is_main', true);
+            }])
+                ->where('categories_id', $category->id)
+                ->inRandomOrder()
+                ->take(5)
+                ->get();
+        }
+
+        return view('welcome', compact('categories', 'randomProducts', 'productsByCategory'));
     }
 }

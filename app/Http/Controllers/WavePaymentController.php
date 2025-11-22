@@ -3,39 +3,76 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\cartItems;
 use App\Models\Orders;
-use App\Models\Carts;
 use Illuminate\Support\Facades\Auth;
 
 class WavePaymentController extends Controller
 {
-
     public function store(Request $request)
     {
         $user = Auth::user();
+        $cart = $user->activeCart;
+        $cartItems = [];
+        $subtotal = 0;
+        $shipping_fee = 0;
+        $total = 0;
 
-        // Récupération du panier actif
-        $cart = Carts::with('items.product')
-            ->where('user_id', $user ? $user->id : null)
-            ->where('status', 'active')
-            ->first();
+        if ($user) {
+            // Panier de l'utilisateur connecté
+            if (!$cart) {
+                return response()->json(['error' => 'Votre panier est vide'], 400);
+            }
 
-        if (!$cart) {
-            return response()->json(['error' => 'Panier introuvable'], 404);
+            $cartItems = $cart->items()->with('product')->get();
+            if ($cartItems->isEmpty()) {
+                return response()->json(['error' => 'Votre panier est vide'], 400);
+            }
+
+            $subtotal = $cartItems->sum(function ($item) {
+                return $item->quantity * $item->product->price;
+            });
+            $shipping_fee = 0;
+            $total = $subtotal + $shipping_fee;
+
+            // Récupération de l'adresse de livraison
+            $addressId = $request->address_id ?? $user->addresses()->first()?->id;
+
+            if (!$addressId) {
+                return response()->json(['error' => 'Aucune adresse disponible pour la commande'], 400);
+            }
+        } else {
+            // Panier en session pour utilisateur non connecté
+            $cart = session()->get('cart');
+            if (!$cart || empty($cart['items'])) {
+                return response()->json(['error' => 'Panier vide'], 400);
+            }
+            $cartItems = $cart['items'];
+            $subtotal = $cart['subtotal'];
+            $shipping_fee = $cart['shipping_fee'];
+            $total = $cart['total'];
+
+            $addressId = null; // pas d'adresse pour un visiteur non connecté
         }
 
-        // Création commande
-        $order = Orders::create([
-            'user_id' => $user ? $user->id : null,
-            'address_id' => $user && $user->address_id ? $user->address_id : null,
-            'order_number' => Orders::generateOrderNumber(),
-            'payment_method' => $request->payment_method,
-            'subtotal' => $cart->subtotal,
-            'shipping_fee' => $cart->shipping_fee,
-            'total' => $cart->total,
-        ]);
+        // Création de la commande
+        try {
+            $order = Orders::create([
+                'user_id' => $user?->id,
+                'address_id' => $addressId,
+                'order_number' => Orders::generateOrderNumber(),
+                'status' => 'pending',
+                'payment_method' => $request->payment_method,
+                'payment_status' => 'unpaid',
+                'subtotal' => $subtotal,
+                'shipping_fee' => $shipping_fee,
+                'total' => $total,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la création de la commande: ' . $e->getMessage()], 500);
+        }
 
-        // Retour JSON pour Wave
+        // Pour Wave
         if ($request->payment_method === 'wave') {
             return response()->json(['order_id' => $order->id]);
         }
@@ -44,23 +81,21 @@ class WavePaymentController extends Controller
         return redirect()->route('checkout.success', $order->id);
     }
 
+
+
+
     public function pay(Orders $order)
     {
-        // URL Wave Mobile Money
-        $merchantNumber = '+2250143633011'; // Remplace par ton numéro Wave
-        $amount = number_format($order->total, 0, '', ''); // montant en FCFA
+        $merchantNumber = '+2250143633011';
+        $amount = number_format($order->total, 0, '', '');
         $orderNumber = $order->order_number;
 
         $isMobile = $this->isMobile();
 
         if ($isMobile) {
-            // redirection deep link Wave App mobile
-            $url = "wave://pay?recipient=$merchantNumber&amount=$amount&order=$orderNumber";
-            return redirect($url);
+            return redirect("wave://pay?recipient=$merchantNumber&amount=$amount&order=$orderNumber");
         }
 
-        // Desktop → affichage QR code
-        // Génération du QR code Wave
         $qrData = json_encode([
             'recipient' => $merchantNumber,
             'amount' => $amount,

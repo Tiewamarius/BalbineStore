@@ -55,14 +55,22 @@ class User extends Authenticatable implements MustVerifyEmail
     // Un utilisateur possède un panier
     public function cart()
     {
-        return $this->hasOne(Carts::class);
+        return $this->hasOne(carts::class);
     }
+
+    public function activeCart()
+    {
+        return $this->hasOne(carts::class)->where('status', 'active');
+    }
+
 
     // Un utilisateur possède une wishlist
     public function wishlist()
     {
-        return $this->hasOne(wishlists::class);
+        return $this->hasOne(wishlists::class, 'wishlist_id', 'id');
     }
+
+
 
     //Un utilisateur peut avoir plusieurs commandes
     public function orders()
@@ -99,10 +107,5 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->imageProfil
             ? asset('storage/' . $this->imageProfil)
             : asset('images/default-avatar.png');
-    }
-
-    public function activeCart()
-    {
-        return $this->hasOne(Carts::class)->where('status', 'active');
     }
 }

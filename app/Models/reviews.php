@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Reviews extends Model
+class reviews extends Model
 {
     use HasFactory;
 
@@ -28,13 +28,13 @@ class Reviews extends Model
     // Un avis appartient à un utilisateur
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(user::class);
     }
 
     // Un avis appartient à un produit
     public function product()
     {
-        return $this->belongsTo(Products::class);
+        return $this->belongsTo(products::class);
     }
 
     /**

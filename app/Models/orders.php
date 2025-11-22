@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Orders extends Model
+class orders extends Model
 {
     use HasFactory;
 
@@ -26,21 +26,18 @@ class Orders extends Model
      */
 
     // La commande appartient à un utilisateur
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+
 
     // La commande est liée à une adresse de livraison ou facturation
-    public function address()
+    public function addresses()
     {
-        return $this->belongsTo(Addresses::class);
+        return $this->belongsTo(addresses::class);
     }
 
     // Une commande contient plusieurs articles
     public function items()
     {
-        return $this->hasMany(Order_Items::class);
+        return $this->hasMany(orderitems::class);
     }
 
     /**

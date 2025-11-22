@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Payments extends Model
+class payments extends Model
 {
     use HasFactory;
 
@@ -24,7 +24,7 @@ class Payments extends Model
     // Un paiement appartient à une commande
     public function order()
     {
-        return $this->belongsTo(Orders::class);
+        return $this->belongsTo(orders::class);
     }
 
     /**

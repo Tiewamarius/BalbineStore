@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Shippings extends Model
+class shippings extends Model
 {
     use HasFactory;
 
@@ -24,7 +24,7 @@ class Shippings extends Model
     // Une livraison appartient à une commande
     public function order()
     {
-        return $this->belongsTo(Orders::class);
+        return $this->belongsTo(orders::class);
     }
 
     /**

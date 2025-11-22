@@ -26,7 +26,7 @@ class addresses extends Model
     // Une adresse appartient à un utilisateur
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(user::class);
     }
 
     /**

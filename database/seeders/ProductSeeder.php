@@ -3,84 +3,113 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Products;
-use App\Models\Categories;
-use App\Models\Brands;
-use App\Models\Product_Images;
+use App\Models\products;
+use App\Models\categories;
+use App\Models\brands;
 use Illuminate\Support\Str;
 
 class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        // 🔹 Créons ou récupérons une catégorie et une marque
-        $category = Categories::firstOrCreate([
-            'name' => 'Soins du visage',
-        ], [
-            'slug' => Str::slug('Soins du visage'),
-        ]);
+        // 🔹 Création des catégories
+        $categoryNames = [
+            'Nettoyages & Entretiens Locaux',
+            'Traitement Phytosanitaire',
+            'Paysagisme & Jardinage',
+            'Parfumage d\'Espace',
+        ];
 
-        $brand = Brands::firstOrCreate(
+        $categories = [];
+        foreach ($categoryNames as $name) {
+            $categories[] = categories::firstOrCreate(
+                ['name' => $name],
+                ['slug' => Str::slug($name)]
+            );
+        }
+
+        // 🔹 Création d'une marque par défaut
+        $brand = brands::firstOrCreate(
             ['name' => 'Balbine Beauty'],
             ['slug' => Str::slug('Balbine Beauty')]
         );
 
-        // 🔹 Exemple d’un tableau de produits dynamiques
+        // 🔹 Produits pour la première catégorie
         $products = [
             [
-                'name' => 'Crème hydratante à l’aloe vera',
-                'description' => 'Une crème légère et nourrissante adaptée à tous les types de peau.',
+                'name' => 'Produit 1',
+                'description' => 'Description du produit 1',
                 'price' => 12000,
-                'discount_price' => 9500,
-                'stock' => 20,
+                'discount_price' => 10000,
+                'stock' => 10,
                 'unit' => 'ml',
                 'is_active' => true,
             ],
             [
-                'name' => 'Masque purifiant au charbon',
-                'description' => 'Masque nettoyant profond qui élimine les impuretés.',
-                'price' => 8500,
+                'name' => 'Produit 2',
+                'description' => 'Description du produit 2',
+                'price' => 15000,
                 'discount_price' => null,
                 'stock' => 15,
                 'unit' => 'ml',
                 'is_active' => true,
             ],
             [
-                'name' => 'Sérum éclat à la vitamine C',
-                'description' => 'Sérum antioxydant pour un teint lumineux et uniforme.',
-                'price' => 15000,
-                'discount_price' => 13000,
+                'name' => 'Produit 3',
+                'description' => 'Description du produit 3',
+                'price' => 9000,
+                'discount_price' => 8500,
                 'stock' => 8,
+                'unit' => 'ml',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Produit 4',
+                'description' => 'Description du produit 4',
+                'price' => 20000,
+                'discount_price' => 18000,
+                'stock' => 5,
+                'unit' => 'ml',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Produit 5',
+                'description' => 'Description du produit 5',
+                'price' => 11000,
+                'discount_price' => null,
+                'stock' => 12,
                 'unit' => 'ml',
                 'is_active' => true,
             ],
         ];
 
-        // 🔹 Boucle d’insertion
+        // 🔹 Boucle d'insertion des produits avec images
+        $firstCategory = $categories[0]; // On prend la première catégorie
         foreach ($products as $data) {
-            $product = Products::create([
-                'categories_id'    => $category->id,
-                'brand_id'       => $brand->id,
-                'name'           => $data['name'],
-                'slug'           => Str::slug($data['name']),
-                'description'    => $data['description'],
-                'price'          => $data['price'],
+            $product = products::create([
+                'categories_id' => $firstCategory->id,
+                'brand_id' => $brand->id,
+                'name' => $data['name'],
+                'slug' => Str::slug($data['name']),
+                'description' => $data['description'],
+                'price' => $data['price'],
                 'discount_price' => $data['discount_price'],
-                'stock'          => $data['stock'],
-                'unit'           => $data['unit'],
-                'is_active'      => $data['is_active'],
+                'stock' => $data['stock'],
+                'unit' => $data['unit'],
+                'is_active' => $data['is_active'],
             ]);
 
-            // 🔹 Images associées
+            // 🔹 Images associées (3 images par produit)
             $images = [
                 'images/products/default1.jpg',
                 'images/products/default2.jpg',
+                'images/products/default3.jpg',
             ];
 
             foreach ($images as $index => $imgPath) {
                 $product->images()->create([
                     'image_path' => $imgPath,
-                    'is_main'    => $index === 0, // première image principale
+                    'is_main' => $index === 0,
                 ]);
             }
         }

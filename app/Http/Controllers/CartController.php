@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Carts;
-use App\Models\Cart_Items;
-use App\Models\Products;
+use App\Models\carts;
+use App\Models\cartitems;
+use App\Models\products;
 
 class CartController extends Controller
 {
@@ -17,14 +17,14 @@ class CartController extends Controller
     {
         if (Auth::check()) {
             // Panier actif de l’utilisateur
-            $cart = Carts::with('items.product')
+            $cart = carts::with('items.product')
                 ->where('user_id', Auth::id())
                 ->where('status', 'active')
                 ->first();
 
             // Si pas de panier existant → créer
             if (!$cart) {
-                $cart = Carts::create([
+                $cart = carts::create([
                     'user_id' => Auth::id(),
                     'status' => 'active',
                 ]);
@@ -42,7 +42,7 @@ class CartController extends Controller
      */
     public function add(Request $request, $id)
     {
-        $product = Products::find($id);
+        $product = products::find($id);
 
         if (!$product) {
             return response()->json(['success' => false, 'message' => 'Produit introuvable'], 404);
@@ -50,20 +50,20 @@ class CartController extends Controller
 
         if (Auth::check()) {
             // Panier actif ou création
-            $cart = Carts::firstOrCreate([
+            $cart = carts::firstOrCreate([
                 'user_id' => Auth::id(),
                 'status' => 'active',
             ]);
 
             // Vérifie si le produit existe déjà
-            $item = Cart_Items::where('cart_id', $cart->id)
+            $item = cartitems::where('cart_id', $cart->id)
                 ->where('product_id', $product->id)
                 ->first();
 
             if ($item) {
                 $item->increment('quantity');
             } else {
-                Cart_Items::create([
+                cartitems::create([
                     'cart_id' => $cart->id,
                     'product_id' => $product->id,
                     'quantity' => 1,
@@ -100,14 +100,14 @@ class CartController extends Controller
     public function update(Request $request, $id)
     {
         $qty = max(1, (int) $request->input('quantity', 1));
-        $product = Products::find($id);
+        $product = products::find($id);
 
         if (!$product) {
             return response()->json(['success' => false, 'message' => 'Produit introuvable'], 404);
         }
 
         if (Auth::check()) {
-            $cart = Carts::where('user_id', Auth::id())
+            $cart = carts::where('user_id', Auth::id())
                 ->where('status', 'active')
                 ->first();
 
@@ -133,14 +133,14 @@ class CartController extends Controller
      */
     public function remove($id)
     {
-        $product = Products::find($id);
+        $product = products::find($id);
 
         if (!$product) {
             return response()->json(['success' => false, 'message' => 'Produit introuvable'], 404);
         }
 
         if (Auth::check()) {
-            $cart = Carts::where('user_id', Auth::id())->where('status', 'active')->first();
+            $cart = carts::where('user_id', Auth::id())->where('status', 'active')->first();
 
             if ($cart) {
                 $cart->items()->where('product_id', $product->id)->delete();
@@ -163,7 +163,7 @@ class CartController extends Controller
     public function clear()
     {
         if (Auth::check()) {
-            Carts::where('user_id', Auth::id())
+            carts::where('user_id', Auth::id())
                 ->where('status', 'active')
                 ->delete();
         } else {
@@ -176,7 +176,7 @@ class CartController extends Controller
 
     public function increase(Request $request)
     {
-        $item = \App\Models\Cart_Items::where('cart_id', auth()->user()->activeCart->id)
+        $item = cartitems::where('cart_id', auth()->user()->activeCart->id)
             ->where('product_id', $request->product_id)
             ->first();
 
@@ -193,7 +193,7 @@ class CartController extends Controller
 
     public function decrease(Request $request)
     {
-        $item = Cart_Items::where('cart_id', auth()->user()->activeCart->id)
+        $item = cartitems::where('cart_id', auth()->user()->activeCart->id)
             ->where('product_id', $request->product_id)
             ->first();
 

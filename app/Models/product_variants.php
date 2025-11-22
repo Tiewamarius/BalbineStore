@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product_Variants extends Model
+class product_variants extends Model
 {
     use HasFactory;
 
@@ -31,7 +31,7 @@ class Product_Variants extends Model
     // Une variante appartient à un produit
     public function product()
     {
-        return $this->belongsTo(Products::class);
+        return $this->belongsTo(products::class);
     }
 
     /**

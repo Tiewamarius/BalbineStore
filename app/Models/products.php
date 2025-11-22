@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Products extends Model
+class products extends Model
 {
     use HasFactory;
     protected $table = 'products';
@@ -27,45 +27,45 @@ class Products extends Model
      */
 
     // Un produit appartient à une catégorie
-    public function Categories()
+    public function categories()
     {
-        return $this->belongsTo(Categories::class);
+        return $this->belongsTo(categories::class);
     }
 
     // Un produit appartient à une marque
-    public function Brands()
+    public function brands()
     {
-        return $this->belongsTo(Brands::class);
+        return $this->belongsTo(brands::class);
     }
 
     // Un produit a plusieurs images
     public function images()
     {
-        return $this->hasMany(Product_Images::class, 'product_id');
+        return $this->hasMany(product_images::class, 'product_id');
     }
 
     // Un produit a plusieurs variantes
     public function variants()
     {
-        return $this->hasMany(Product_Variants::class);
+        return $this->hasMany(product_variants::class);
     }
 
     // Un produit est dans plusieurs paniers
-    public function cartItems()
+    public function cartitems()
     {
-        return $this->hasMany(Cart_Items::class);
+        return $this->hasMany(cartitems::class);
     }
 
     // Un produit peut appartenir à plusieurs wishlists
     public function wishlists()
     {
-        return $this->belongsToMany(Wishlists::class, 'wishlist_product');
+        return $this->belongsToMany(wishlists::class, 'wishlist_product');
     }
 
     // Un produit a plusieurs avis
     public function reviews()
     {
-        return $this->hasMany(Reviews::class);
+        return $this->hasMany(reviews::class);
     }
 
     /**
