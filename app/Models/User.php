@@ -90,14 +90,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(roles::class, 'role_user');
     }
 
-    /**
-     *Accessors / Mutators
-     */
-    public function setPasswordAttribute($value)
-    {
-        // Hash automatique du mot de passe à la sauvegarde
-        $this->attributes['password'] = bcrypt($value);
-    }
+
 
     /**
      * Méthode d’aide pour l’image de profil

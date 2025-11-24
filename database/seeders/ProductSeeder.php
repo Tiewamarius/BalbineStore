@@ -12,105 +12,44 @@ class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        // 🔹 Création des catégories
-        $categoryNames = [
-            'Nettoyages & Entretiens Locaux',
-            'Traitement Phytosanitaire',
-            'Paysagisme & Jardinage',
-            'Parfumage d\'Espace',
-        ];
-
-        $categories = [];
-        foreach ($categoryNames as $name) {
-            $categories[] = categories::firstOrCreate(
-                ['name' => $name],
-                ['slug' => Str::slug($name)]
-            );
-        }
-
-        // 🔹 Création d'une marque par défaut
+        $categories = categories::all();
         $brand = brands::firstOrCreate(
             ['name' => 'Balbine Beauty'],
             ['slug' => Str::slug('Balbine Beauty')]
         );
 
-        // 🔹 Produits pour la première catégorie
-        $products = [
-            [
-                'name' => 'Produit 1',
-                'description' => 'Description du produit 1',
-                'price' => 12000,
-                'discount_price' => 10000,
-                'stock' => 10,
-                'unit' => 'ml',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Produit 2',
-                'description' => 'Description du produit 2',
-                'price' => 15000,
-                'discount_price' => null,
-                'stock' => 15,
-                'unit' => 'ml',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Produit 3',
-                'description' => 'Description du produit 3',
-                'price' => 9000,
-                'discount_price' => 8500,
-                'stock' => 8,
-                'unit' => 'ml',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Produit 4',
-                'description' => 'Description du produit 4',
-                'price' => 20000,
-                'discount_price' => 18000,
-                'stock' => 5,
-                'unit' => 'ml',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Produit 5',
-                'description' => 'Description du produit 5',
-                'price' => 11000,
-                'discount_price' => null,
-                'stock' => 12,
-                'unit' => 'ml',
-                'is_active' => true,
-            ],
+        $defaultImages = [
+            'images/products/default1.jpg',
+            'images/products/default2.jpg',
+            'images/products/default3.jpg',
         ];
 
-        // 🔹 Boucle d'insertion des produits avec images
-        $firstCategory = $categories[0]; // On prend la première catégorie
-        foreach ($products as $data) {
-            $product = products::create([
-                'categories_id' => $firstCategory->id,
-                'brand_id' => $brand->id,
-                'name' => $data['name'],
-                'slug' => Str::slug($data['name']),
-                'description' => $data['description'],
-                'price' => $data['price'],
-                'discount_price' => $data['discount_price'],
-                'stock' => $data['stock'],
-                'unit' => $data['unit'],
-                'is_active' => $data['is_active'],
-            ]);
+        foreach ($categories as $category) {
 
-            // 🔹 Images associées (3 images par produit)
-            $images = [
-                'images/products/default1.jpg',
-                'images/products/default2.jpg',
-                'images/products/default3.jpg',
-            ];
+            for ($i = 1; $i <= 10; $i++) {
 
-            foreach ($images as $index => $imgPath) {
-                $product->images()->create([
-                    'image_path' => $imgPath,
-                    'is_main' => $index === 0,
+                $name = "Produit {$i} - {$category->name}";
+
+                $product = products::create([
+                    'categories_id' => $category->id,
+                    'brand_id' => $brand->id,
+                    'name' => $name,
+                    'slug' => Str::slug($name . '-' . uniqid()),
+                    'description' => "Description de {$name}",
+                    'price' => rand(5000, 20000),
+                    'discount_price' => rand(0, 1) ? rand(3000, 15000) : null,
+                    'stock' => rand(5, 30),
+                    'unit' => 'ml',
+                    'is_active' => true,
                 ]);
+
+                // 3 images
+                foreach ($defaultImages as $index => $img) {
+                    $product->images()->create([
+                        'image_path' => $img,
+                        'is_main' => $index === 0,
+                    ]);
+                }
             }
         }
     }

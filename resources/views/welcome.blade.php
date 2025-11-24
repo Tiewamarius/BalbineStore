@@ -3,7 +3,6 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BALBINE STORE</title>
     <link rel="icon" type="image/png" href="{{ asset('images/cropped-logo-odedis-store-32x32.Jpg') }}">
@@ -189,10 +188,10 @@
     @foreach($categories as $category)
 
     @php
-    $products = $productsByCategory[$category->name] ?? collect();
+    $products = $productsByCategory[$category->slug] ?? collect();
 
     $bannerImages = [
-    'Nettoyages et Entretiens Lacaux' => [
+    'Nettoyages & Entretiens Locaux' => [
     'Images/hygiene-locaux-professionnels-desinfectant.jpg',
     'Images/hygiene-locaux-professionnels-desinfectant.jpg',
     'Images/hygiene-locaux-professionnels-desinfectant.jpg',
@@ -221,16 +220,12 @@
     @endphp
 
     <section class="pubmarketing-section">
-        <img src="{{ asset($banner) }}"
-            alt="{{ $category->name }}"
-            class="pub-image">
+        <img src="{{ asset($banner) }}" alt="{{ $category->name }}" class="pub-image">
     </section>
 
     <center>
         <h2 class="section-title">{{ $category->name }}</h2>
     </center>
-
-
     <div class="product-grid">
 
         @forelse($products as $product)
@@ -263,7 +258,7 @@
         @endforelse
 
     </div>
-
+    <div><br><br></div>
     @endforeach
     @include('partials.footer')
     <div class="overlay" id="overlay"></div>

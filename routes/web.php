@@ -19,6 +19,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/detailsProduct/{products}', [ProductController::class, 'show'])
     ->name('product.show');
 
+// La vue 'search' doit probablement être dans un contrôleur, mais on la laisse pour l'instant
 Route::get('/search', function () {
     return view('search');
 })->name('search');
@@ -27,8 +28,6 @@ Route::get('/search', function () {
 |--------------------------------------------------------------------------
 | Routes Panier (accessibles sans connexion)
 |--------------------------------------------------------------------------
-| Utilise la session pour stocker les produits.
-| Permet aux visiteurs d’ajouter au panier sans compte.
 */
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -37,6 +36,7 @@ Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.
 Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
+// 💡 Amélioration: La logique de comptage devrait être dans le contrôleur ou un petit groupe de route
 Route::get('/cart/count', function () {
     if (auth()->check()) {
         $cart = \App\Models\Carts::where('user_id', auth()->id())->where('status', 'active')->first();
@@ -50,32 +50,39 @@ Route::get('/cart/count', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Routes Authentifiées
+| Routes Authentifiées (auth & verified)
 |--------------------------------------------------------------------------
-| Nécessitent que l’utilisateur soit connecté.
+| Les middlewares 'auth' et 'verified' sont appliqués à l'ensemble du groupe.
 */
 
-Route::middleware('auth', ' verified')->group(function () {
+// CORRECTION: Suppression de l'espace en trop avant 'verified'
+Route::middleware(['auth', 'verified'])->group(function () {
+
     // Tableau de bord
+    // SUPPRESSION: Le middleware 'verified' est déjà appliqué par le groupe.
     Route::get('/dashboard', function () {
         return view('dashboard');
-    })->middleware(['verified'])->name('dashboard');
+    })->name('dashboard');
 
     // Compte & profil
+    // SUPPRESSION: Le middleware 'auth' est déjà appliqué par le groupe.
     Route::get('/compte', [ProfileController::class, 'compte'])
-        ->middleware('auth')
         ->name('compte');
+
+    // Routes de ressources pour le profil (patch, delete, edit)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Mettre ces routes POST dans un groupe si elles sont liées au panier/commandes
     Route::post('/cart/increase', [CartController::class, 'increase'])->name('cart.increase');
     Route::post('/cart/decrease', [CartController::class, 'decrease'])->name('cart.decrease');
 
-    // checkout
+    // Checkout
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
+    // Paiement Wave
     Route::get('/wave/pay/{order}', [WavePaymentController::class, 'pay'])->name('wave.pay');
     Route::get('/wave/success/{order}', [WavePaymentController::class, 'success'])->name('wave.success');
 });
@@ -91,7 +98,6 @@ require __DIR__ . '/auth.php';
 |--------------------------------------------------------------------------
 | Fallback (page non trouvée)
 |--------------------------------------------------------------------------
-| Redirige vers la page d’accueil si l’URL n’existe pas.
 */
 
 Route::fallback(function () {
