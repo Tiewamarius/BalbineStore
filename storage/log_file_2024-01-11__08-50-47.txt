@@ -1,0 +1,97 @@
+
+---Downloaded files---
+The import files for: Home v1 - v7 Elementor were successfully downloaded!
+Initial max execution time = 120
+Files info:
+Site URL = http://localhost/balbinestore
+Data file = C:\wamp64\www\balbinestore/wp-content/themes/electro/assets/dummy-data/elementor/dummy-data.xml
+Widget file = C:\wamp64\www\balbinestore/wp-content/themes/electro/assets/dummy-data/elementor/widgets.wie
+Customizer file = not defined!
+Redux files:
+electro_options -> C:\wamp64\www\balbinestore/wp-content/themes/electro/assets/dummy-data/elementor/redux-options.json 
+
+
+------
+New AJAX call!
+
+
+------
+New AJAX call!
+
+
+------
+New AJAX call!
+
+
+------
+New AJAX call!
+
+
+------
+New AJAX call!
+
+
+------
+New AJAX call!
+
+
+---ocdi/before_widgets_import---
+
+
+---Importing widgets---
+Home Sidebar : 
+
+Image - No Title - Imported
+Products list - Latest Products - Imported
+Electro Features Block - No Title - Imported
+Electro Products Carousel - Featured Products - Imported
+Electro Posts Carousel - From the Blog - Imported
+
+Shop Sidebar : 
+
+Electro Product Categories - No Title - Imported
+Electro Product Filter - Filters - Imported
+Image - No Title - Imported
+Products list - Latest Products - Imported
+
+Product Filters : 
+
+Active Product Filters - Active Filters - Imported
+Filter Products by Attribute - Brands - Imported
+Filter Products by Attribute - Color - Imported
+Filter Products by Price - Price - Imported
+
+Blog Sidebar : 
+
+Rechercher - No Title - Imported
+Texte - About Blog - Imported
+Catégories - Categories - Imported
+Electro Recent Posts - Recent Posts - Imported
+Nuage d’étiquettes - Tags Clouds - Imported
+
+Footer Widgets : 
+
+Products list - Featured Products - Imported
+Products list - Top Selling Products - Imported
+Products list - On-sale Products - Imported
+
+Footer Bottom Widgets : 
+
+Menu de navigation - Find It Fast - Imported
+Menu de navigation -   - Imported
+Menu de navigation - Customer Care - Imported
+
+Mobile Footer Bottom Widgets : 
+
+Menu de navigation - We Recommend - Imported
+Menu de navigation - My Account - Imported
+Menu de navigation - Customer Care - Imported
+Menu de navigation - About Us - Imported
+
+
+
+---Importing Redux settings---
+Redux settings import for: electro_options finished successfully!
+
+---ocdi/after_import---
+

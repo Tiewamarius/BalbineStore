@@ -1,37 +1,86 @@
- document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.querySelector('.search-input-lg');
-    const wishlistButtons = document.querySelectorAll('.wishlist-btn');
+/***************************************************
+ *  BARRE DE RECHERCHE DYNAMIQUE (LIVE SEARCH)
+ ***************************************************/
+document.addEventListener("DOMContentLoaded", function () {
 
-    // 1. Mettre le focus sur le champ de recherche au chargement de la page
-    // Cela rend l'expérience utilisateur immédiate : l'utilisateur peut taper directement.
-    if (searchInput) {
-        setTimeout(() => {
-            searchInput.focus();
-        }, 100); 
-    }
+    const input          = document.querySelector(".search-input-lg");
+    const resultsContainer = document.getElementById("search-results");
+    const randomGrid     = document.querySelector(".product-grid");
 
-    // 2. Gestion des favoris (Wishlist)
-    wishlistButtons.forEach(button => {
-        button.addEventListener('click', (event) => {
-            event.preventDefault();
-            
-            // Simuler l'ajout/retrait du produit des favoris
-            const productCard = button.closest('.product-card');
-            const productName = productCard.querySelector('.product-name').textContent;
+    let timer = null;
 
-            button.classList.toggle('is-favorited');
+    input.addEventListener("keyup", function () {
+        const query = input.value.trim();
 
-            if (button.classList.contains('is-favorited')) {
-                console.log(`${productName} a été ajouté aux favoris.`);
-                // Changer l'icône ou la couleur si l'état "favoris" est actif
-                button.style.opacity = 1;
-                button.querySelector('svg').style.fill = '#4bcef3'; // Rendre le cœur rouge
-            } else {
-                console.log(`${productName} a été retiré des favoris.`);
-                // Rétablir l'icône/couleur par défaut
-                button.style.opacity = 0.8;
-                button.querySelector('svg').style.fill = '#000000';
+        clearTimeout(timer);
+
+        timer = setTimeout(() => {
+
+            // 🔹 Moins de 2 caractères → reset
+            if (query.length < 2) {
+                resultsContainer.style.display = "none";
+                randomGrid.style.display = "grid";
+                resultsContainer.innerHTML = "";
+                return;
             }
-        });
+
+            // 🔹 Requête AJAX
+            fetch(`/search-products?q=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(products => {
+
+                    resultsContainer.innerHTML = "";
+
+                    // Aucun résultat
+                    if (products.length === 0) {
+                        resultsContainer.innerHTML = `
+                            <p style="grid-column:1/-1; text-align:center">
+                                Aucun produit trouvé
+                            </p>`;
+                    } else {
+
+                        // Affichage produits trouvés
+                        products.forEach(p => {
+                            resultsContainer.innerHTML += `
+                                <a href="/detailsProduct/${p.id}">
+                                    <div class="product-card">
+                                        
+                                        <div class="product-image-wrapper">
+                                            <img src="/storage/${p.image}" alt="${p.name}">
+                                        </div>
+
+                                        <div class="product-info">
+                                            <p class="product-name">${p.name}</p>
+                                            <p class="product-price">${p.price} XOF</p>
+                                        </div>
+
+                                    </div>
+                                </a>
+                            `;
+                        });
+                    }
+
+                    // Toggle affichage
+                    randomGrid.style.display = "none";
+                    resultsContainer.style.display = "grid";
+                });
+
+        }, 300); // Anti-spam
     });
+});
+
+
+/***************************************************
+ *  BARRE DE RECHERCHE STICKY AU SCROLL
+ ***************************************************/
+document.addEventListener("scroll", () => {
+    const bar = document.querySelector(".sticky-search");
+
+    if (!bar) return;
+
+    if (window.scrollY > 50) {
+        bar.classList.add("is-sticky");
+    } else {
+        bar.classList.remove("is-sticky");
+    }
 });

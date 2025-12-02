@@ -1,4 +1,4 @@
-<header class="hero-headerDetail">
+<header class="hero-header">
     <div class="hero-left">
         <button class="menu-btn" id="menuToggle">
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
@@ -16,9 +16,10 @@
         </a>
     </div>
 
-    <a href="{{ url('/') }}">
+    <a href="{{ url('/') }}" class="logo">
         <div class="hero-center">
-            <h1 class="logo">BALBINE STORE</h1>
+            <img src="{{ asset('/Images/logoBalbineSTORE.png') }}" alt="Balbine Store" class="logo-img">
+
         </div>
     </a>
 
@@ -33,7 +34,7 @@
         </span>
 
         @guest
-        <span class="icon" id="loginToggle">
+        <span class="menu-btn" id="loginToggle">
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                 fill="#e3e3e3">
                 <path

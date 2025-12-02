@@ -107,7 +107,8 @@
     </section>
     <div class="overlay" id="overlay"></div>
 
-    @include('partials.allModal')
+    @include('partials.AuthModal')
+    @include('partials.cart-sidebar')
 
 
     <script src="{{ asset('js/detailsProduits.js') }}" defer></script>

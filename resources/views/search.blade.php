@@ -8,85 +8,60 @@
     <link rel="stylesheet" href="{{ asset('css/search.css') }}">
     <link rel="stylesheet" href="{{ asset('css/detailsProduits.css') }}">
     <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 </head>
 
 <body>
+    @include('partials.header')
 
-    <div class="search-page-container" id="searchPage">
-        <div class="search-container">
 
-            <!-- Header -->
-            @include('partials.header')
-
-            <div class="search-content">
-                <div class="search-input-wrapper">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#4a4a4a">
-                        <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
-                    </svg>
-                    <input type="text" placeholder="Rechercher des articles, des prix..." class="search-input-lg">
-                </div>
-
-                <div class="popular-searches">
-                    <h3>RECHERCHES POPULAIRES</h3>
-                    <div class="tags">
-                        <a href="#">Javel Liquide</a>
-                        <a href="#">Calivoir</a>
-                        <a href="#">Promaster</a>
-                        <a href="#">Parfumage</a>
-                        <a href="#">Senter</a>
-                        <a href="#">Brosse</a>
-                    </div>
-                </div>
-
-                <div class="inspirations-section">
-                    <h2>Recherche Avancée</h2>
-                    <div class="product-grid">
-
-                        <div class="product-card">
-                            <div class="product-image-wrapper">
-                                <img src="images/desinfectant-virucide-500x667.jpg" alt="Sac Side Trunk MM">
-                                <span class="custom-badge">Personnalisable</span>
-                            </div>
-                            <div class="product-info">
-                                <p class="product-name">Sac Side Trunk MM</p>
-                                <p class="product-price">3 200,00 XOF</p>
-                            </div>
-                            <button class="wishlist-btn" aria-label="Ajouter aux favoris">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000">
-                                    <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z" />
-                                </svg>
-                            </button>
-                        </div>
-
-                        <div class="product-card">
-                            <div class="product-image-wrapper">
-                                <img src="images/desinfectant-virucide-500x667.jpg" alt="Écharpe Reykjavík 2.0">
-                                <span class="custom-badge">Précommande en ligne</span>
-                            </div>
-                            <div class="product-info">
-                                <p class="product-name">Écharpe Reykjavík 2.0</p>
-                                <p class="product-price">880,00 XOF</p>
-                            </div>
-                            <button class="wishlist-btn" aria-label="Ajouter aux favoris">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000">
-                                    <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z" />
-                                </svg>
-                            </button>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="inspirations-section">
-                    <h2>Recherche Avancée</h2>
-                    <div class="product-grid">
-                    </div>
-                </div>
-
-            </div>
+    <div class="search-content">
+        <div class="search-input-wrapper sticky-search">
+            <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#4a4a4a">
+                <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
+            </svg>
+            <input type="text" placeholder="Rechercher des articles, des prix..." class="search-input-lg">
         </div>
+
+
     </div>
+    <div id="search-results" class="product-grid" style="margin-top:20px; display:none;">
+
+    </div>
+
+
+    <div class="product-grid-search">
+        @foreach($randomProducts as $randomProduct)
+        <a href="{{ url('detailsProduct/' . $randomProduct->id) }}">
+            <div class="product-card">
+                <div class="product-image-wrapper">
+                    <img
+                        src="{{ asset('storage/' . ($randomProduct->images->first()->image_path ?? 'images/default.png')) }}"
+                        alt="{{ $randomProduct->name }}">
+
+                    @if($randomProduct->is_customizable ?? false)
+                    <span class="custom-badge">Personnalisable</span>
+                    @endif
+                </div>
+
+                <div class="product-info">
+                    <p class="product-name">{{ $randomProduct->name }}</p>
+                    <p class="product-price">{{ number_format($randomProduct->price, 0, ',', ' ') }} XOF</p>
+                </div>
+
+                <button class="wishlist-btn" aria-label="Ajouter aux favoris">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000">
+                        <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z" />
+                    </svg>
+                </button>
+            </div>
+        </a>
+        @endforeach
+    </div>
+    @include('partials.footer')
+    <div class="overlay" id="overlay"></div>
+
     @include('partials.allModal')
 
     <script src={{ asset("js/search.js") }} defer></script>

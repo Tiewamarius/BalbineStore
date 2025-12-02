@@ -1,9 +1,11 @@
-/* ===== RESET & BASE ===== */
+/* ============================================================
+   =============== BASE RESET ===============================
+============================================================ */
 * {
     box-sizing: border-box;
 }
 
-body, html {
+html, body {
     margin: 0;
     padding: 0;
     font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -12,7 +14,12 @@ body, html {
     overflow-x: hidden;
 }
 
-/* ===== SEARCH PAGE CONTAINER (La Modale devient le Contenu Principal de la Page) ===== */
+
+/* ============================================================
+   =============== SEARCH PAGE LAYOUT ========================
+============================================================ */
+
+/* --- Container principal --- */
 .search-page-container {
     width: 100%;
     min-height: 100vh;
@@ -26,10 +33,10 @@ body, html {
     padding: 20px;
 }
 
-/* ===== HEADER (En-tête de la page de recherche) ===== */
+/* --- Header Search --- */
 .search-header {
     display: flex;
-    justify-content: flex-start; /* Aligné à gauche après avoir retiré le bouton de fermeture */
+    justify-content: flex-start;
     align-items: center;
     padding: 10px 0 20px 0;
     border-bottom: 1px solid #e0e0e0;
@@ -43,22 +50,35 @@ body, html {
     margin: 0;
 }
 
-
-/* ===== SEARCH CONTENT (Section principale) ===== */
-.search-content {
-    padding: 20px 0;
+/* --- Sticky Barre Recherche --- */
+.sticky-search {
+    position: sticky;
+    top: 70px;
+    z-index: 999;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 35px;
+    margin-bottom: 20px;
 }
 
-/* Champ de recherche principal */
+.sticky-search.is-sticky {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: box-shadow 0.2s ease;
+}
+
+/* --- Zone centrale --- */
+.search-content {
+    margin-top: 80px;
+}
+
+/* --- Input Search --- */
 .search-input-wrapper {
     display: flex;
     align-items: center;
     border: 1px solid #4bcef3;
     padding: 8px 15px;
-    margin-bottom: 20px;
     max-width: 650px;
-    margin-left: auto; /* Centrage */
-    margin-right: auto; /* Centrage */
+    margin: 0 auto 20px auto;
     border-radius: 35px;
 }
 
@@ -83,70 +103,20 @@ body, html {
     font-style: italic;
 }
 
-/* Recherches populaires */
-.popular-searches {
-    text-align: center;
-    margin-bottom: 60px;
-}
 
-.popular-searches h3 {
-    font-size: 13px;
-    font-weight: 500;
-    color: #555;
-    margin-bottom: 15px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
+/* ============================================================
+   =============== PRODUCT GRID =============================
+============================================================ */
 
-.popular-searches .tags {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 0;
-}
-
-.popular-searches .tags a {
-    text-decoration: none;
-    color: #000;
-    font-size: 15px;
-    border-right: 1px solid #d0d0d0;
-    padding: 0 10px;
-    transition: color 0.2s;
-    line-height: 1;
-}
-.popular-searches .tags a:last-child {
-    border-right: none;
-}
-.popular-searches .tags a:first-child {
-    padding-left: 0;
-}
-.popular-searches .tags a:hover {
-    color: #777;
-}
-
-/* Sections Inspirations/Produits */
-.inspirations-section h2 {
-    font-size: 15px;
-    font-weight: 500;
-    text-transform: uppercase;
-    margin-bottom: 30px;
-    color: #000;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 5px;
-}
-
-.product-grid {
+.product-grid-search {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); 
+    grid-template-columns: repeat(4, 1fr);
     gap: 30px;
-    /* margin-bottom: 40px; */
-    justify-content: center; 
+    justify-content: center;
 }
 
-/* Style de la carte produit */
 .product-card {
     position: relative;
-    padding: 0;
     cursor: pointer;
     text-align: center;
 }
@@ -160,7 +130,6 @@ body, html {
 .product-image-wrapper img {
     width: 100%;
     height: auto;
-    display: block;
 }
 
 .custom-badge {
@@ -172,36 +141,16 @@ body, html {
     font-size: 10px;
     padding: 3px 6px;
     font-weight: 500;
-    opacity: 0.9;
-    letter-spacing: 0.5px;
-}
-
-.product-info {
-    text-align: center;
-}
-.product-info p {
-    margin: 2px 0;
-    font-size: 13px;
-    color: #000;
-}
-
-.product-name {
-    font-weight: 400;
-}
-
-.product-price {
-    font-weight: 600;
 }
 
 .wishlist-btn {
     position: absolute;
     top: 5px;
-    right: 0px;
+    right: 0;
     background: none;
     border: none;
     cursor: pointer;
     padding: 5px;
-    z-index: 10;
     opacity: 0.8;
 }
 
@@ -209,68 +158,31 @@ body, html {
     fill: #000;
     transition: fill 0.2s;
 }
+
 .wishlist-btn:hover svg {
     fill: #4bcef3;
 }
 
-/* ===== RESPONSIVE ===== */
+.product-info {
+    text-align: center;
+}
+
+.product-info p {
+    margin: 2px 0;
+    font-size: 13px;
+    color: #000;
+}
+
+.product-price { font-weight: 600; }
+
+
+/* ============================================================
+   =============== RESPONSIVE ================================
+============================================================ */
+
+/* --- TABLETTE --- */
 @media (max-width: 1024px) {
-    .product-grid {
-        grid-template-columns: repeat(4, 1fr); 
-        gap: 20px;
-    }
-}
-
-@media (max-width: 768px) {
-    .product-grid-categoties {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-    }
-    
-    .product-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-    }
-    .search-input-wrapper {
-        max-width: 100%;
-    }
-    .search-input-lg {
-        font-size: 16px;
-    }
-    .popular-searches .tags a {
-        font-size: 14px;
-        padding: 0 8px;
-    }
-}
-
-@media (max-width: 480px) {
-    .product-grid-categoties {
-        grid-template-columns: repeat(1, 1fr);
-    }
-    
-    .product-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    .product-info p {
-        font-size: 12px;
-    }
-}
-
-
-/**********************************************/
-/********  RESPONSIVE – OPTIMISATION  *********/
-/**********************************************/
-
-/* ===== TABLETTES ===== */
-@media (max-width: 1024px) {
-
-    .search-header {
-        padding: 10px 0 15px 0;
-    }
-
-    .search-header .logo {
-        font-size: 20px;
-    }
+    .search-header .logo { font-size: 20px; }
 
     .search-input-wrapper svg {
         width: 24px;
@@ -284,23 +196,13 @@ body, html {
     }
 }
 
-
-/* ===== MOBILES ===== */
+/* --- MOBILE --- */
 @media (max-width: 768px) {
 
-    /******** HEADER ********/
-    .search-header {
-        padding: 8px 0 12px 0;
-    }
+    .search-header { padding: 8px 0 12px; }
+    .search-header .logo { font-size: 18px; }
 
-    .search-header .logo {
-        font-size: 18px;
-        letter-spacing: 1px;
-    }
-
-    /******** SEARCH BAR ********/
     .search-input-wrapper {
-        max-width: 100%;
         padding: 6px 12px;
         border-radius: 28px;
     }
@@ -311,84 +213,36 @@ body, html {
         margin-right: 10px;
     }
 
-    .search-input-lg {
-        font-size: 15px;
-    }
-
-    /******** TAGS ********/
-    .popular-searches {
-        margin-bottom: 40px;
-    }
-
-    .popular-searches .tags {
-        gap: 8px;
-        flex-wrap: wrap;
-    }
+    .search-input-lg { font-size: 15px; }
 
     .popular-searches .tags a {
-        border-right: none; /* Fini le problème de coupure */
         padding: 4px 10px;
-        background: #f5f5f5;
-        border-radius: 20px;
         font-size: 13px;
+        border-radius: 20px;
+        background: #f5f5f5;
     }
 
-    /******** SECTION TITLES ********/
-    .inspirations-section h2 {
-        font-size: 14px;
-        margin-bottom: 20px;
-    }
-
-    /******** PRODUITS ********/
     .product-grid {
         grid-template-columns: repeat(3, 1fr);
         gap: 15px;
     }
-
-    .product-image-wrapper img {
-        border-radius: 4px;
-    }
 }
 
+/* --- PETITS TELEPHONES --- */
+@media (max-width: 500px) {
+    .search-header .logo { font-size: 16px; }
 
-/* ===== PETITS TÉLÉPHONES ===== */
-@media (max-width: 480px) {
-
-    /******** HEADER ********/
-    .search-header .logo {
-        font-size: 16px;
-    }
-
-    /******** SEARCH BAR ********/
     .search-input-wrapper {
         padding: 5px 10px;
         border-radius: 25px;
     }
 
-    .search-input-wrapper svg {
-        width: 20px;
-        height: 20px;
-    }
-
-    .search-input-lg {
-        font-size: 14px;
-    }
-
-    /******** TAGS ********/
-    .popular-searches .tags a {
-        font-size: 12px;
-        padding: 3px 8px;
-    }
-
-    /******** PRODUCT GRID ********/
     .product-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
 
-    .product-info p {
-        font-size: 12px;
-    }
+    .product-info p { font-size: 12px; }
 
     .custom-badge {
         font-size: 8px;
@@ -401,19 +255,109 @@ body, html {
     }
 }
 
-
-/* ===== ULTRA PETITS ÉCRANS (OPTIONNEL) ===== */
+/* --- ULTRA SMALL --- */
 @media (max-width: 360px) {
-
-    .search-input-lg {
-        font-size: 13px;
-    }
-
+    .search-input-lg { font-size: 13px;
+     }
+     
     .product-grid {
         gap: 8px;
+        grid-template-columns: repeat(2, 2fr) !important; /* 1 produit par ligne */
+        gap: 1rem;
     }
+}
 
-    .product-card {
-        padding: 0;
-    }
+
+
+/* ============================================================
+   =============== SLIDER DIVYA =============================
+============================================================ */
+
+html, body {
+    background: #F7F5E6;
+    height: 100%;
+}
+
+.slider { margin: 0 auto; }
+
+.slide_viewer {
+    height: 340px;
+    overflow: hidden;
+    position: relative;
+}
+
+.slide_group {
+    height: 100%;
+    position: relative;
+    width: 100%;
+}
+
+.slide {
+    display: none;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+.slide:first-child {
+    display: block;
+}
+
+.slide:nth-of-type(1) { background: #D7A151; }
+.slide:nth-of-type(2) { background: #F4E4CD; }
+.slide:nth-of-type(3) { background: #C75534; }
+.slide:nth-of-type(4) { background: #D1D1D4; }
+
+.slide_buttons {
+    left: 0;
+    right: 0;
+    position: absolute;
+    text-align: center;
+}
+
+a.slide_btn {
+    color: #474544;
+    font-size: 32px;
+    margin: 0 0.175em;
+    transition: all 0.4s ease;
+}
+
+.slide_btn.active,
+.slide_btn:hover {
+    color: #428CC6;
+    cursor: pointer;
+}
+
+.directional_nav {
+    height: 240px;
+    max-width: 940px;
+    margin: 0 auto;
+    position: relative;
+    top: -340px;
+}
+
+.previous_btn,
+.next_btn {
+    cursor: pointer;
+    height: 60px;
+    width: 50px;
+    opacity: 0.5;
+    transition: opacity 0.4s ease;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.previous_btn { left: 50px; }
+.next_btn { right: 50px; }
+
+.previous_btn:hover,
+.next_btn:hover {
+    opacity: 1;
+}
+
+@media only screen and (max-width: 767px) {
+    .previous_btn { left: 30px; }
+    .next_btn { right: 30px; }
 }

@@ -13,6 +13,48 @@ class CartController extends Controller
     /**
      * Afficher le panier
      */
+
+    // Augmenter quantité pour session
+    public function increaseSession(Request $request)
+    {
+        $cart = session()->get('cart', []);
+        $id = $request->product_id;
+
+        if (isset($cart[$id])) {
+            $cart[$id]['quantity']++;
+            session()->put('cart', $cart);
+            $quantity = $cart[$id]['quantity'];
+            $count = array_sum(array_column($cart, 'quantity'));
+
+            return response()->json(['quantity' => $quantity, 'cart_total' => $count]);
+        }
+
+        return response()->json(['quantity' => 0, 'cart_total' => 0]);
+    }
+
+    // Diminuer quantité pour session
+    public function decreaseSession(Request $request)
+    {
+        $cart = session()->get('cart', []);
+        $id = $request->product_id;
+
+        if (isset($cart[$id])) {
+            if ($cart[$id]['quantity'] > 1) {
+                $cart[$id]['quantity']--;
+                $quantity = $cart[$id]['quantity'];
+            } else {
+                unset($cart[$id]);
+                $quantity = 0;
+            }
+            session()->put('cart', $cart);
+            $count = array_sum(array_column($cart, 'quantity'));
+
+            return response()->json(['quantity' => $quantity, 'cart_total' => $count]);
+        }
+
+        return response()->json(['quantity' => 0, 'cart_total' => 0]);
+    }
+
     public function index()
     {
         if (Auth::check()) {

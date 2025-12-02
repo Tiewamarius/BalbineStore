@@ -26,7 +26,7 @@ class HomeController extends Controller
             $q->where('is_main', true);
         }])
             ->inRandomOrder()     // utilise le seed
-            ->take(5)
+            ->take(6)
             ->get();
 
         srand(); // reset
@@ -40,7 +40,7 @@ class HomeController extends Controller
             }])
                 ->where('categories_id', $category->id)
                 ->inRandomOrder()
-                ->take(5)
+                ->take(6)
                 ->get();
         }
 

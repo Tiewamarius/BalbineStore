@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\brands;
+use App\Models\Brands;
 use Illuminate\Support\Str;
 
 class BrandSeeder extends Seeder
@@ -11,15 +11,22 @@ class BrandSeeder extends Seeder
     public function run(): void
     {
         $brandNames = [
-            'Balbine Beauty',
-            'Oshun Pro',
-            'Floralis',
+            'PROMASTER',
+            'CALIVOIR',
+            'A2P',
+            'ALMAO',
+            'NDS',
         ];
 
         foreach ($brandNames as $name) {
-            brands::firstOrCreate(
+            Brands::firstOrCreate(
                 ['name' => $name],
-                ['slug' => Str::slug($name)]
+                [
+                    'slug' => Str::slug($name),
+                    'description' => 'Marque ' . $name,
+                    'logo' => 'images/brands/' . Str::slug($name) . '.png',
+                    'is_active' => true,
+                ]
             );
         }
     }

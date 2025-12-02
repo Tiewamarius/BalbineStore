@@ -1,52 +1,175 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+<!doctype html>
+<html lang="fr">
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
-        </div>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Inscription — Balbine Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0b0b0b;
+            --card: #0f0f0f;
+            --muted: #bfbfbf;
+            --accent: #ffffff;
+            --input: #141414
+        }
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+        * {
+            box-sizing: border-box
+        }
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        body {
+            margin: 0;
+            font-family: Inter, system-ui;
+            background: var(--bg);
+            color: var(--accent);
+        }
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
+        .wrap {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 32px
+        }
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+        .card {
+            width: 100%;
+            max-width: 440px;
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.6)
+        }
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+        h1 {
+            margin: 0 0 6px;
+            font-size: 22px
+        }
 
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
+        p.lead {
+            color: var(--muted);
+            font-size: 13px;
+            margin: 0 0 18px
+        }
 
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
+        label {
+            display: block;
+            font-size: 13px;
+            margin: 10px 0 6px;
+            color: var(--muted)
+        }
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
+        .input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: var(--input);
+            color: #fff;
+            font-size: 14px
+        }
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+        .input:focus {
+            border-color: rgba(255, 255, 255, 0.15)
+        }
+
+        .field {
+            margin-bottom: 14px;
+            position: relative
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 14px
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 12px;
+            background: #fff;
+            color: #000;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            margin-top: 10px
+        }
+
+        .auth-btn:active {
+            transform: translateY(1px)
+        }
+
+        .hint {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--muted)
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <main class="card">
+            <h1>Créer un compte</h1>
+            <p class="lead">Rejoignez Balbine Store dès maintenant</p>
+
+            <form action="{{ route('register') }}" method="POST" id="registerForm" novalidate>
+                @csrf
+
+                <div class="field">
+                    <label>Nom (ou Prénoms)*</label>
+                    <input class="input" type="text" name="name" required placeholder="Votre nom">
+                </div>
+
+                <div class="field">
+                    <label>Contact*</label>
+                    <input class="input" type="tel" name="phone" required placeholder="Contact">
+                </div>
+
+                <div class="field">
+                    <label>E-mail*</label>
+                    <input class="input" type="email" name="email" required placeholder="exemple@domaine.com">
+                </div>
+
+                <div class="field">
+                    <label>Mot de passe*</label>
+                    <input class="input pwd" type="password" name="password" required>
+                    <i class="fa-solid fa-eye password-toggle"></i>
+                </div>
+
+                <div class="field">
+                    <label>Retaper le mot de passe*</label>
+                    <input class="input pwd" type="password" name="password_confirmation" required>
+                    <i class="fa-solid fa-eye password-toggle"></i>
+                </div>
+
+                <button type="submit" class="auth-btn">S'inscrire</button>
+                <p class="hint">Déjà un compte ? <a href="{{ route('login') }}" style="color:#fff;text-decoration:underline">Se connecter</a></p>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        document.querySelectorAll('.password-toggle').forEach((toggle) => {
+            toggle.addEventListener('click', () => {
+                const input = toggle.previousElementSibling;
+                const isPwd = input.type === "password";
+
+                input.type = isPwd ? "text" : "password";
+                toggle.classList.toggle("fa-eye");
+                toggle.classList.toggle("fa-eye-slash");
+            });
+        });
+    </script>
+</body>
+
+</html>

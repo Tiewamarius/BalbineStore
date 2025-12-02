@@ -21,15 +21,9 @@
 
 <body>
     <section class="hero-banner">
-        <!-- <img src="{{ asset('images/2021-12-produits-menagers-1536x959.jpg') }}" alt="Balbine Store Banner" class="hero-bg"> -->
-        <video autoplay muted loop playsinline class="hero-bg">
-            <source src="{{ asset('Streams/banner.MOV') }}" type="video/mov">
-            Votre navigateur ne supporte pas la vidéo.
-        </video>
         <video class="hero-bg" autoplay muted loop playsinline>
-            <source src="{{ asset('Streams/banner.mov') }}" type="video/mp4">
-            <!-- Fallback si la vidéo ne charge pas -->
-            Votre navigateur ne supporte pas la vidéo.
+            <source src="{{ asset('Streams/nettoyage.mp4') }}" type="video/mp4">
+
         </video>
 
         <div class="hero-overlay">
@@ -140,7 +134,7 @@
                     <div class="card-icon">
                         <i class="fas fa-arrow-right"></i>
                     </div>
-                    <a href="#" class="read-more-btn">VOIR PLUS <i class="fas fa-arrow-right rotate-diagonal"></i></a>
+                    <a href="{{ route('category.categories', $category->id) }}" class="read-more-btn">VOIR PLUS<i class="fas fa-arrow-right rotate-diagonal"></i></a>
                 </div>
             </div>
 
@@ -150,8 +144,11 @@
     </section>
 
     <section class="pubmarketing-section">
-        <!-- sectionMarketing -->
-        <img src="{{ asset('images/BALBINE-STORE-1--1536x768.jpg') }}" alt="Promotion spéciale" class="pub-image">
+        <img src="{{ asset('Images/BALBINE-STORE-1--768x384.jpg') }}" class="pub-image">
+        <!-- <video class="hero-bg" autoplay muted loop playsinline>
+            <source src="{{ asset('Streams/banner.mov') }}" type="video/mp4">
+
+        </video> -->
     </section>
 
     <!-- Quelque produit mieux visité-->
@@ -192,23 +189,22 @@
 
     $bannerImages = [
     'Nettoyages & Entretiens Locaux' => [
-    'Images/hygiene-locaux-professionnels-desinfectant.jpg',
-    'Images/hygiene-locaux-professionnels-desinfectant.jpg',
-    'Images/hygiene-locaux-professionnels-desinfectant.jpg',
+
+    'Streams/nettoyage.mp4',
+    // 'Images/hygiene-locaux-professionnels-desinfectant.jpg',
+    // 'Images/hygiene-locaux-professionnels-desinfectant.jpg',
     ],
     'Traitement Phytosanitaire' => [
-    'Images/Cleaning-Chemicals-Washroom-Toilet1.jpg',
-    'Images/Cleaning-Chemicals-Washroom-Toilet1.jpg',
+    'Images/BALBINE-STORE-1--768x384.jpg',
+    // 'Images/Cleaning-Chemicals-Washroom-Toilet1.jpg',
     ],
     'Paysagisme & Jardinage' => [
-    'Images/csm_2020_Hauert.jpeg',
-    'Images/csm_2020_Hauert.jpeg',
-    'Images/csm_2020_Hauert.jpeg',
+    'Streams/paysagiste.mp4',
+    // 'Images/csm_2020_Hauert.jpeg',
+    // 'Images/csm_2020_Hauert.jpeg',
     ],
     "Parfumage d'Espace" => [
-    'Images/flacons-parfum-table.jpg',
-    'Images/flacons-parfum-table.jpg',
-    'Images/flacons-parfum-table.jpg',
+    'Streams/banner-parfumage.mp4',
     ],
     ];
 
@@ -220,7 +216,12 @@
     @endphp
 
     <section class="pubmarketing-section">
-        <img src="{{ asset($banner) }}" alt="{{ $category->name }}" class="pub-image">
+        <video class="hero-bg" autoplay muted loop playsinline>
+
+            <source src="{{ asset($banner) }}" type="video/mp4">
+
+        </video>
+        <!-- <img src="{{ asset($banner) }}" alt="{{ $category->name }}" class="pub-image"> -->
     </section>
 
     <center>
@@ -263,7 +264,8 @@
     @include('partials.footer')
     <div class="overlay" id="overlay"></div>
 
-    @include('partials.allModal')
+    @include('partials.cart-sidebar')
+    @include('partials.AuthModal')
 
 
     <script src="{{ asset('js/detailsProduits.js') }}" defer></script>

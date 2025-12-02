@@ -47,7 +47,7 @@ class products extends Model
     // Un produit a plusieurs variantes
     public function variants()
     {
-        return $this->hasMany(product_variants::class);
+        return $this->hasMany(ProductVariant::class, 'product_id');
     }
 
     // Un produit est dans plusieurs paniers
