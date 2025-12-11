@@ -4,12 +4,12 @@
         <button id="closeMenu">✕</button>
     </header>
     <ul>
-        <li><a href="#">Nettoyages et Entretiens Lacaux</a></li>
-        <li><a href="#">Produits professionnels</a></li>
-        <li><a href="#">Matériel</a></li>
-        <li><a href="#">Machines</a></li>
-        <li><a href="#">Hygiène & sanitaires</a></li>
-        <li><a href="#">Écologiques</a></li>
+        <li><a href="{{ route('category.categories', 1) }}">Nettoyages & Entretiens Lacaux</a></li>
+        <li><a href="{{ route('category.categories', 2) }}">Traitement Phytosanitaire</a></li>
+        <li><a href="{{ route('category.categories', 3) }}">Paysagisme & Jardinage</a></li>
+        <li><a href="{{ route('category.categories', 4) }}">Parfumage d'Espace</a></li>
+        <li><a href="https://www.balbine.net" target="_blank">LES SERVICES BALBINE.NET</a></li>
+        <!-- <li><a href="#">Écologiques</a></li> -->
     </ul>
     <div class="footer">
         <p>Besoin d'aide ?</p>

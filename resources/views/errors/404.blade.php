@@ -66,7 +66,7 @@
 <body>
 
     <div class="box">
-        <h1>Nous sommes avec vous</h1>
+        <h1>Oups!!</h1>
         <p>La page que vous recherchez n'existe pas.</p>
         <p>Redirection dans <span id="counter">5</span> secondes...</p>
     </div>

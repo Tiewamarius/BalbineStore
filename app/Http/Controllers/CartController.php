@@ -4,75 +4,32 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\carts;
-use App\Models\cartitems;
-use App\Models\products;
+use App\Models\Carts;
+use App\Models\CartItems;
+use App\Models\Products;
 
 class CartController extends Controller
 {
     /**
      * Afficher le panier
      */
-
-    // Augmenter quantité pour session
-    public function increaseSession(Request $request)
-    {
-        $cart = session()->get('cart', []);
-        $id = $request->product_id;
-
-        if (isset($cart[$id])) {
-            $cart[$id]['quantity']++;
-            session()->put('cart', $cart);
-            $quantity = $cart[$id]['quantity'];
-            $count = array_sum(array_column($cart, 'quantity'));
-
-            return response()->json(['quantity' => $quantity, 'cart_total' => $count]);
-        }
-
-        return response()->json(['quantity' => 0, 'cart_total' => 0]);
-    }
-
-    // Diminuer quantité pour session
-    public function decreaseSession(Request $request)
-    {
-        $cart = session()->get('cart', []);
-        $id = $request->product_id;
-
-        if (isset($cart[$id])) {
-            if ($cart[$id]['quantity'] > 1) {
-                $cart[$id]['quantity']--;
-                $quantity = $cart[$id]['quantity'];
-            } else {
-                unset($cart[$id]);
-                $quantity = 0;
-            }
-            session()->put('cart', $cart);
-            $count = array_sum(array_column($cart, 'quantity'));
-
-            return response()->json(['quantity' => $quantity, 'cart_total' => $count]);
-        }
-
-        return response()->json(['quantity' => 0, 'cart_total' => 0]);
-    }
-
     public function index()
     {
         if (Auth::check()) {
-            // Panier actif de l’utilisateur
-            $cart = carts::with('items.product')
+            $cart = Carts::with('items.product')
                 ->where('user_id', Auth::id())
                 ->where('status', 'active')
                 ->first();
 
-            // Si pas de panier existant → créer
             if (!$cart) {
-                $cart = carts::create([
+                // Crée un panier actif si aucun n'existe pour l'utilisateur
+                $cart = Carts::create([
                     'user_id' => Auth::id(),
                     'status' => 'active',
                 ]);
             }
         } else {
-            // Panier stocké en session
+            // Récupère le panier depuis la session pour les utilisateurs non connectés
             $cart = session('cart', []);
         }
 
@@ -84,28 +41,28 @@ class CartController extends Controller
      */
     public function add(Request $request, $id)
     {
-        $product = products::find($id);
-
+        $product = Products::find($id);
         if (!$product) {
             return response()->json(['success' => false, 'message' => 'Produit introuvable'], 404);
         }
 
         if (Auth::check()) {
-            // Panier actif ou création
-            $cart = carts::firstOrCreate([
+            // Gestion du panier pour utilisateur connecté
+            $cart = Carts::firstOrCreate([
                 'user_id' => Auth::id(),
                 'status' => 'active',
             ]);
 
-            // Vérifie si le produit existe déjà
-            $item = cartitems::where('cart_id', $cart->id)
+            $item = CartItems::where('cart_id', $cart->id)
                 ->where('product_id', $product->id)
                 ->first();
 
             if ($item) {
+                // Incrémentation de la quantité
                 $item->increment('quantity');
             } else {
-                cartitems::create([
+                // Ajout d'un nouvel article
+                CartItems::create([
                     'cart_id' => $cart->id,
                     'product_id' => $product->id,
                     'quantity' => 1,
@@ -113,22 +70,26 @@ class CartController extends Controller
                 ]);
             }
 
+            // Mise à jour du nombre d'articles
             $count = $cart->items()->sum('quantity');
         } else {
-            // Utilisateur non connecté → panier en session
+            // Gestion du panier pour utilisateur non connecté (session)
             $cart = session()->get('cart', []);
 
             if (isset($cart[$product->id])) {
+                // Mise à jour de la quantité si le produit existe
                 $cart[$product->id]['quantity']++;
             } else {
+                // Ajout du produit au panier si ce n'est pas encore fait
                 $cart[$product->id] = [
                     'name' => $product->name,
                     'price' => $product->price,
                     'quantity' => 1,
-                    'image' => $product->image,
+                    'image' => $product->images->first()?->image_path ?? 'images/no-image.png',
                 ];
             }
 
+            // Mise à jour de la session
             session()->put('cart', $cart);
             $count = array_sum(array_column($cart, 'quantity'));
         }
@@ -136,20 +97,20 @@ class CartController extends Controller
         return response()->json(['success' => true, 'count' => $count]);
     }
 
+
     /**
-     * Mettre à jour la quantité d’un article
+     * Mettre à jour la quantité d'un article dans le panier
      */
     public function update(Request $request, $id)
     {
         $qty = max(1, (int) $request->input('quantity', 1));
-        $product = products::find($id);
-
+        $product = Products::find($id);
         if (!$product) {
             return response()->json(['success' => false, 'message' => 'Produit introuvable'], 404);
         }
 
         if (Auth::check()) {
-            $cart = carts::where('user_id', Auth::id())
+            $cart = Carts::where('user_id', Auth::id())
                 ->where('status', 'active')
                 ->first();
 
@@ -171,24 +132,23 @@ class CartController extends Controller
     }
 
     /**
-     * Supprimer un article
+     * Supprimer un article du panier
      */
-    public function remove($id)
+    public function remove(Request $request, $id)
     {
-        $product = products::find($id);
-
+        $product = Products::find($id);
         if (!$product) {
             return response()->json(['success' => false, 'message' => 'Produit introuvable'], 404);
         }
 
         if (Auth::check()) {
-            $cart = carts::where('user_id', Auth::id())->where('status', 'active')->first();
-
+            $cart = Carts::where('user_id', Auth::id())->where('status', 'active')->first();
             if ($cart) {
                 $cart->items()->where('product_id', $product->id)->delete();
+                $count = $cart->items()->sum('quantity');
+            } else {
+                $count = 0;
             }
-
-            $count = $cart ? $cart->items()->sum('quantity') : 0;
         } else {
             $cart = session()->get('cart', []);
             unset($cart[$product->id]);
@@ -200,14 +160,15 @@ class CartController extends Controller
     }
 
     /**
-     * Vider complètement le panier
+     * Vider le panier
      */
     public function clear()
     {
         if (Auth::check()) {
-            carts::where('user_id', Auth::id())
-                ->where('status', 'active')
-                ->delete();
+            $cart = Carts::where('user_id', Auth::id())->where('status', 'active')->first();
+            if ($cart) {
+                $cart->items()->delete();
+            }
         } else {
             session()->forget('cart');
         }
@@ -216,37 +177,119 @@ class CartController extends Controller
     }
 
 
+    // Augmenter la quantité d'un article (connecté)
     public function increase(Request $request)
     {
-        $item = cartitems::where('cart_id', auth()->user()->activeCart->id)
+        $cart = Carts::where('user_id', auth()->id())->where('status', 'active')->first();
+        if (!$cart) {
+            return response()->json(['success' => false, 'message' => 'Panier introuvable', 'quantity' => 0, 'cart_total' => 0]);
+        }
+
+        $item = CartItems::where('cart_id', $cart->id)
             ->where('product_id', $request->product_id)
             ->first();
 
-        if ($item) {
-            $item->quantity += 1;
-            $item->save();
+        if (!$item) {
+            return response()->json(['success' => false, 'message' => 'Article non trouvé', 'quantity' => 0, 'cart_total' => $cart->items()->sum('quantity')]);
         }
 
-        return response()->json([
-            'quantity' => $item->quantity,
-            'cart_total' => auth()->user()->activeCart->items->sum('quantity'),
-        ]);
+        $item->increment('quantity');
+
+        $cart_total = $cart->items()->sum('quantity');
+
+        return response()->json(['success' => true, 'quantity' => $item->quantity, 'cart_total' => $cart_total]);
     }
 
+    // Diminuer la quantité d'un article (connecté)
     public function decrease(Request $request)
     {
-        $item = cartitems::where('cart_id', auth()->user()->activeCart->id)
+        $cart = Carts::where('user_id', auth()->id())->where('status', 'active')->first();
+        if (!$cart) {
+            return response()->json(['success' => false, 'message' => 'Panier introuvable', 'quantity' => 0, 'cart_total' => 0]);
+        }
+
+        $item = CartItems::where('cart_id', $cart->id)
             ->where('product_id', $request->product_id)
             ->first();
 
-        if ($item && $item->quantity > 1) {
-            $item->quantity -= 1;
-            $item->save();
+        if (!$item) {
+            return response()->json(['success' => false, 'message' => 'Article non trouvé', 'quantity' => 0, 'cart_total' => $cart->items()->sum('quantity')]);
         }
 
-        return response()->json([
-            'quantity' => $item->quantity,
-            'cart_total' => auth()->user()->activeCart->items->sum('quantity'),
-        ]);
+        if ($item->quantity > 1) {
+            $item->decrement('quantity');
+            $quantity = $item->quantity;
+        } else {
+            // store the quantity BEFORE deletion so we can return it
+            $quantity = 0;
+            $item->delete();
+        }
+
+        $cart_total = $cart->items()->sum('quantity');
+
+        return response()->json(['success' => true, 'quantity' => $quantity, 'cart_total' => $cart_total]);
+    }
+
+
+    /**
+     * Augmenter la quantité d'un article (non connecté)
+     */
+    public function increaseSession(Request $request)
+    {
+        $cart = session()->get('cart', []);
+        $id = $request->product_id;
+
+        if (isset($cart[$id])) {
+            $cart[$id]['quantity']++;
+            session()->put('cart', $cart);
+        }
+
+        $count = array_sum(array_column($cart, 'quantity'));
+        $quantity = $cart[$id]['quantity'] ?? 0;
+
+        return response()->json(['quantity' => $quantity, 'cart_total' => $count]);
+    }
+
+    /**
+     * Diminuer la quantité d'un article (non connecté)
+     */
+    public function decreaseSession(Request $request)
+    {
+        $cart = session()->get('cart', []);
+        $id = $request->product_id;
+
+        if (isset($cart[$id])) {
+            if ($cart[$id]['quantity'] > 1) {
+                $cart[$id]['quantity']--;
+                $quantity = $cart[$id]['quantity'];
+            } else {
+                unset($cart[$id]);
+                $quantity = 0;
+            }
+            session()->put('cart', $cart);
+        } else {
+            $quantity = 0;
+        }
+
+        $count = array_sum(array_column($cart, 'quantity'));
+        return response()->json(['quantity' => $quantity, 'cart_total' => $count]);
+    }
+
+    /**
+     * Charger le contenu de la sidebar panier
+     */
+    public function loadSidebar()
+    {
+        if (!auth()->check()) {
+            $cart = session('cart', []);
+            return view('partials.cart-sidebar-items', compact('cart'))->render();
+        }
+
+        $cart = Carts::with('items.product')
+            ->where('user_id', auth()->id())
+            ->where('status', 'active')
+            ->first();
+
+        return view('partials.cart-sidebar-items', compact('cart'))->render();
     }
 }

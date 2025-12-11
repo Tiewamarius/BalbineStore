@@ -17,32 +17,24 @@ class ProfileController extends Controller
      */
     public function compte(Request $request): View
     {
-        $user = $request->user();
-
-        // Panier actif
-        $cartItems = $user->activeCart
-            ? $user->activeCart->items()->with('product.images')->get()
-            : collect();
-
-        // Commandes de l'utilisateur
-        $orders = $user->orders()->latest()->get();
-
-        // Wishlist
-        $wishlist = $user->wishlist
-            ? $user->wishlist->products()->with('images')->get()
-            : collect();
-
-        // Adresses de livraison
-        $addresses = $user->addresses()->get();
-
-        return view('compte', compact(
-            'user',
-            'cartItems',
-            'orders',
-            'wishlist',
+        $user = $request->user()->load([
+            'activeCart.items.product.images',
+            'orders' => function ($q) {
+                $q->latest();
+            },
+            'wishlist.products.images',
             'addresses'
-        ));
+        ]);
+
+        return view('profile.compte', [
+            'user' => $user,
+            'cartItems' => $user->activeCart ? $user->activeCart->items : collect(),
+            'orders' => $user->orders,
+            'wishlist' => $user->wishlist ? $user->wishlist->products : collect(),
+            'addresses' => $user->addresses
+        ]);
     }
+
 
 
 

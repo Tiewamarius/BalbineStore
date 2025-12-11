@@ -162,8 +162,8 @@
             </form>
         </div>
 
-        <p class="small" style="margin-top:14px;">
-            Astuce : si vous ne voyez rien dans votre boîte de réception, vérifiez le dossier spam ou la bonne orthographe de l'adresse.
+        <p class="small" style="margin-top:16px;">
+            Astuce :Si Vous ne voyez rien dans votre boîte de réception, Vérifiez le dossier <bold style="color:black;font-weight:900;">Spam</bold> OU <blod style="color:black;font-weight:900;">la bonne orthographe de l'adresse</bold>.
         </p>
     </main>
 

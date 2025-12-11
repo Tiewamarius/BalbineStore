@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BALBINE STORE</title>
     <link rel="icon" type="image/png" href="{{ asset('images/cropped-logo-odedis-store-32x32.Jpg') }}">
@@ -11,6 +12,7 @@
     <meta property="og:description" content="Produits d'entretien et matériel professionnel.">
     <meta property="og:image" content="{{ asset('images/BALBINE-STORE-1--1536x768.jpg') }}">
     <meta name="robots" content="index,follow">
+
 
     <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
 
@@ -88,17 +90,25 @@
                                 d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z" />
                         </svg>
 
-                        @auth
                         @php
+                        $cartCount = 0;
+
+                        if(auth()->check()) {
                         $cartCount = \App\Models\Carts::where('user_id', auth()->id())
                         ->where('status', 'active')
                         ->withSum('items as total_qty', 'quantity')
                         ->first()
                         ->total_qty ?? 0;
+                        }
+
+                        // Si invité → lire depuis la session (si elle existe)
+                        if(session()->has('cart.items')) {
+                        $cartCount = collect(session('cart.items'))->sum('quantity');
+                        }
                         @endphp
 
                         <span id="cartCount" class="cart-badge">{{ $cartCount }}</span>
-                        @endauth
+
                     </span>
                 </div>
             </header>

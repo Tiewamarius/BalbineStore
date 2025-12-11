@@ -5,10 +5,10 @@
             <button id="closeMenu">✕</button>
         </header>
         <ul>
-            <li><a href="#">Nettoyages & Entretiens Lacaux</a></li>
-            <li><a href="#">Traitement Phytosanitaire</a></li>
-            <li><a href="#">Paysagisme & Jardinage</a></li>
-            <li><a href="#">Parfumage d'Espace</a></li>
+            <li><a href="{{ route('category.categories', 1) }}">Nettoyages & Entretiens Lacaux</a></li>
+            <li><a href="{{ route('category.categories', 2) }}">Traitement Phytosanitaire</a></li>
+            <li><a href="{{ route('category.categories', 3) }}">Paysagisme & Jardinage</a></li>
+            <li><a href="{{ route('category.categories', 4) }}">Parfumage d'Espace</a></li>
             <li><a href="https://www.balbine.net" target="_blank">LES SERVICES BALBINE.NET</a></li>
             <!-- <li><a href="#">Écologiques</a></li> -->
         </ul>

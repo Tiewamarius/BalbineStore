@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class orders extends Model
+class Orders extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'address_id',
+        'address_id',  // Assurez-vous que cette colonne existe dans la table orders
         'order_number',
         'status',       // pending, paid, shipped, delivered, cancelled
         'payment_method',
@@ -26,18 +26,21 @@ class orders extends Model
      */
 
     // La commande appartient à un utilisateur
-
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     // La commande est liée à une adresse de livraison ou facturation
-    public function addresses()
+    public function address()
     {
-        return $this->belongsTo(addresses::class);
+        return $this->belongsTo(Addresses::class);  // Assurez-vous que la table address existe
     }
 
     // Une commande contient plusieurs articles
     public function items()
     {
-        return $this->hasMany(orderitems::class);
+        return $this->hasMany(OrderItems::class, 'order_id');
     }
 
     /**

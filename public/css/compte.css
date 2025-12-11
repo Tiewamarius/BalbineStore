@@ -1,11 +1,17 @@
-.hero-header{
+ /* ====================================== */
+/* ========== BASE GLOBAL ================ */
+/* ====================================== */
+
+.hero-header {
     background-color: #ffffff;
     color: #000;
 }
 
-.menu-btn svg,.hero-left svg {
+.menu-btn svg,
+.hero-left svg {
     color: #000;
 }
+
 .banner {
     position: relative;
     width: 100%;
@@ -36,7 +42,26 @@
     font-size: 1.2rem;
 }
 
-/* ===== SUB MENU ===== */
+/* ====================================== */
+/* ========== SYSTEME D'ONGLETS ========= */
+/* ====================================== */
+
+.tab-content {
+    display: none;
+    opacity: 0;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+    opacity: 1;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 .sub-menu {
     display: flex;
     justify-content: center;
@@ -45,13 +70,12 @@
     background: #fff;
     border-bottom: 1px solid #e5e5e5;
     position: sticky;
-    top: var(--header-height, 70px); /* la hauteur de ton header principal */ 
-    z-index: 1000;
+    top: var(--header-height, 70px);
+    z-index: 100;
     height: 70px;
     transition: box-shadow 0.3s ease, background 0.3s ease;
 }
 
-/* Quand le header devient sticky, ombre douce */
 .sub-menu.scrolled {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
@@ -70,15 +94,14 @@
     border-bottom: 2px solid #000;
 }
 
-/* ===== CARDS ===== */
-.compte-content {
-    max-width: 1100px;
-    margin: 60px auto 40px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
-    gap: 1.5rem;
-    padding: 0 1rem;
+.sub-menu a.active {
+    border-bottom: 3px solid #000;
+    font-weight: bold;
 }
+
+/* ====================================== */
+/* ========== CARDS & BUTTONS =========== */
+/* ====================================== */
 
 .card {
     background: #fff;
@@ -104,24 +127,52 @@
     color: #333;
 }
 
-.btn {
+.btn,
+.btn-primary,
+.btn-secondary {
     display: inline-block;
-    width: 100%;
     text-align: center;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn {
+    width: 100%;
     padding: 0.8rem;
-    border-radius: 40px;
     background: #000;
     color: #fff;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: all 0.2s;
 }
 
 .btn:hover {
+    background: #222;
+}
+
+.btn-primary {
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    margin-top: 1.2rem;
+}
+
+.btn-primary:hover {
     background: #333;
 }
 
-/* ======== APERÇU ======== */
+.btn-secondary {
+    border: 1px solid #000;
+    background: transparent;
+    padding: 0.6rem 1.2rem;
+    margin-top: 1rem;
+}
+
+/* ====================================== */
+/* ========== APERÇU ==================== */
+/* ====================================== */
+
 .overview-header {
     text-align: center;
     margin: 2rem 0 3rem;
@@ -173,74 +224,9 @@
     margin-bottom: 1.2rem;
 }
 
-/* Bouton déjà existant */
-.btn {
-    display: inline-block;
-    text-align: center;
-    padding: 0.8rem 2rem;
-    border-radius: 50px;
-    background: #000;
-    color: #fff;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-}
-
-.btn:hover {
-    background: #222;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .overview-grid {
-        grid-template-columns: 1fr;
-        padding: 0 0.5rem;
-    }
-}
-
-/* ===== FOOTER ===== */
-footer {
-    text-align: center;
-    padding: 3rem 1rem;
-    border-top: 1px solid #e5e5e5;
-    background: #fafafa;
-}
-
-.logout-btn {
-    margin-top: 1.5rem;
-    display: inline-block;
-    padding: 0.7rem 2rem;
-    border: 1px solid #000;
-    border-radius: 40px;
-    background: transparent;
-    color: #000;
-    text-decoration: none;
-    transition: all 0.2s;
-    cursor: pointer;
-}
-
-.logout-btn:hover {
-    background: #000;
-    color: #fff;
-}
-.sub-menu a.active {
-    border-bottom: 3px solid #000;
-    color: #000;
-}
-
-.tab-content {
-    display: none;
-    animation: fadeIn 0.3s ease;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+/* ====================================== */
+/* ========== PROFIL ==================== */
+/* ====================================== */
 
 .profil-container {
     width: 90%;
@@ -260,7 +246,8 @@ footer {
     gap: 2rem;
 }
 
-.profil-section, .profil-block {
+.profil-section,
+.profil-block {
     background: #fff;
     border-radius: 6px;
     padding: 1.5rem;
@@ -273,7 +260,7 @@ footer {
     font-weight: 500;
 }
 
-.profil-section input, 
+.profil-section input,
 .profil-section select {
     width: 100%;
     padding: 0.7rem;
@@ -295,261 +282,193 @@ footer {
     margin-right: 2%;
 }
 
-.btn-primary {
-    background: #000;
-    color: #fff;
-    border: none;
-    padding: 0.8rem 1.5rem;
-    margin-top: 1.2rem;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-.btn-primary:hover {
-    background: #333;
-}
-
-.btn-secondary {
-    border: 1px solid #000;
-    background: transparent;
-    padding: 0.6rem 1.2rem;
-    border-radius: 30px;
-    cursor: pointer;
-    margin-top: 1rem;
-}
-
 .toggle-group label {
     display: flex;
     justify-content: space-between;
     padding: 0.5rem 0;
-    border-bottom: 1px solid #eee;
 }
-
-@media (max-width: 900px) {
-    .profil-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-
-
-@media (max-width: 768px) {
-    .compte-content {
-        grid-template-columns: 1fr;
-    }
-
-    .banner {
-        height: 220px;
-    }
-
-    .user-badge {
-        width: 55px;
-        height: 55px;
-        font-size: 1rem;
-    }
-
-    .sub-menu a {
-        padding: 0.8rem 1rem;
-        font-size: 0.9rem;
-    }
-}
-
 
 /* ====================================== */
-/* ========== RESPONSIVE 1024px ========= */
+/* ========== SECTION COMMANDES ========= */
+/* ====================================== */
+
+.orders-list {
+    margin-top: 1.5rem;
+}
+
+.order-item {
+    background: #fff;
+    border: 1px solid #eaeaea;
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: box-shadow 0.2s ease;
+}
+
+.order-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.order-img img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+.order-info h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+    color: #000;
+}
+
+.order-info p {
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+/* Badges */
+.badge {
+    padding: 0.35em 0.65em;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 0.3rem;
+    color: #fff;
+}
+
+.bg-success { background-color: #4CAF50 !important; }
+.bg-warning { background-color: #ffc107 !important; color: #212529 !important; }
+.bg-danger  { background-color: #e53935 !important; }
+
+/* Détails */
+.order-actions a {
+    color: #ff7f00;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.order-actions a:hover {
+    text-decoration: underline;
+}
+
+/* ====================================== */
+/* ========== FOOTER ==================== */
+/* ====================================== */
+
+footer {
+    text-align: center;
+    padding: 3rem 1rem;
+    border-top: 1px solid #e5e5e5;
+    background: #fafafa;
+}
+
+.logout-btn {
+    margin-top: 1.5rem;
+    display: inline-block;
+    padding: 0.7rem 2rem;
+    border: 1px solid #000;
+    border-radius: 40px;
+    background: transparent;
+    color: #000;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.logout-btn:hover {
+    background: #000;
+    color: #fff;
+}
+
+/* ====================================== */
+/* ========== RESPONSIVE ================= */
 /* ====================================== */
 
 @media (max-width: 1024px) {
-    .compte-content {
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    }
-
-    .profil-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .overview-grid {
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    }
+    .compte-content { grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); }
+    .profil-grid { grid-template-columns: 1fr 1fr; }
+    .overview-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 }
-
-
-/* ====================================== */
-/* =========== RESPONSIVE 900px ========= */
-/* ====================================== */
 
 @media (max-width: 900px) {
-
-    /* grille profil */
-    .profil-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-
-    .profil-title {
-        text-align: center;
-    }
-
-    .profil-container {
-        width: 95%;
-    }
-
-    .birth-date select {
-        width: 32%;
-    }
+    .profil-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+    .profil-title { text-align: center; }
+    .profil-container { width: 95%; }
 }
-
-
-/* ====================================== */
-/* =========== RESPONSIVE 768px ========= */
-/* ====================================== */
 
 @media (max-width: 768px) {
-
-    /* bannière */
-    .banner {
-        height: 200px;
-    }
-
-    .user-badge {
-        width: 50px;
-        height: 50px;
-        font-size: 0.9rem;
-    }
-
-    /* sous-menu */
-    .sub-menu {
-        height: 60px;
-        padding: 0 10px;
-    }
-
-    .sub-menu a {
-        padding: 0.7rem 0.9rem;
-        font-size: 0.85rem;
-    }
-
-    /* cartes */
-    .compte-content {
-        grid-template-columns: 1fr;
-        padding: 0 0.7rem;
-    }
-
-    .card {
-        border-radius: 6px;
-    }
-
-    /* aperçu */
-    .overview-grid {
-        grid-template-columns: 1fr;
-        padding: 0 0.5rem;
-        gap: 1.2rem;
-    }
-
-    .overview-header {
-        margin: 1.5rem 0 2rem;
-    }
-
-    /* profil */
-    .profil-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .profil-section,
-    .profil-block {
-        padding: 1.2rem;
-        border-radius: 6px;
-    }
+    .compte-content { grid-template-columns: 1fr; padding: 0 0.7rem; }
+    .banner { height: 200px; }
+    .user-badge { width: 50px; height: 50px; font-size: 0.9rem; }
+    .sub-menu { height: 60px; padding: 0 10px; }
+    .sub-menu a { padding: 0.7rem 0.9rem; font-size: 0.85rem; }
 }
 
 
-/* ====================================== */
-/* =========== RESPONSIVE 600px ========= */
-/* ====================================== */
+@media (max-width: 700px) {
+
+    /* Commandes */
+    .order-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+    }
+
+    .order-img img {
+        width: 100%;
+        height: auto;
+    }
+
+    .order-info {
+        width: 100%;
+    }
+
+    .order-actions {
+        width: 100%;
+        text-align: right;
+        margin-top: 0.5rem;
+    }
+}
 
 @media (max-width: 600px) {
-
-    /* bannière */
-    .banner {
-        height: 170px;
-    }
-
-    .user-badge {
-        width: 45px;
-        height: 45px;
-        bottom: -25px;
-        font-size: 0.85rem;
-    }
-
-    /* texte global */
-    .overview-card h3 {
-        font-size: 1rem;
-    }
-
-    .overview-card p {
-        font-size: 0.85rem;
-    }
-
-    .profil-title {
-        font-size: 1.4rem;
-    }
-
-    .btn,
-    .btn-primary,
-    .btn-secondary {
-        font-size: 0.85rem;
-    }
+    .banner { height: 170px; }
+    .user-badge { width: 45px; height: 45px; bottom: -25px; font-size: 0.85rem; }
+    .overview-card h3 { font-size: 1rem; }
+    .overview-card p { font-size: 0.85rem; }
+    .profil-title { font-size: 1.4rem; }
+    .btn, .btn-primary, .btn-secondary { font-size: 0.85rem; }
 }
-
-
-/* ====================================== */
-/* =========== RESPONSIVE 480px ========= */
-/* ====================================== */
 
 @media (max-width: 480px) {
+    .banner { height: 150px; }
+    .user-badge { width: 40px; height: 40px; bottom: -20px; font-size: 0.8rem; }
+    .sub-menu { height: 55px; }
+    .sub-menu a { padding: 0.6rem 0.7rem; font-size: 0.8rem; }
+    .card-body { font-size: 0.9rem; }
+    .card-header { font-size: 1rem; }
 
-    /* bannière */
-    .banner {
-        height: 150px;
-    }
-
-    .user-badge {
-        width: 40px;
-        height: 40px;
-        font-size: 0.8rem;
-        bottom: -20px;
-    }
-
-    /* sous-menu */
-    .sub-menu {
-        height: 55px;
-    }
-
-    .sub-menu a {
-        padding: 0.6rem 0.7rem;
-        font-size: 0.8rem;
-    }
-
-    /* cartes */
-    .card-body {
-        font-size: 0.9rem;
-    }
-
-    .card-header {
-        font-size: 1rem;
-    }
-
-    /* profil */
-    .profil-container {
-        padding: 1.5rem 0;
-    }
-
+    .profil-container { padding: 1.5rem 0; }
     .profil-section input,
-    .profil-section select {
-        padding: 0.6rem;
+    .profil-section select { padding: 0.6rem; }
+    .birth-date select { width: 31%; }
+
+    /* Commandes */
+    .order-item {
+        padding: 0.8rem;
     }
 
-    .birth-date select {
-        width: 31%;
+    .order-info h5 { font-size: 0.95rem; }
+    .order-info p { font-size: 0.85rem; }
+
+    .order-img img {
+        width: 80px;
+        height: 80px;
     }
 }
+
 

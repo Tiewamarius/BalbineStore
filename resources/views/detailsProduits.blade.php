@@ -43,40 +43,48 @@
             <p class="product-status">Nouveau</p>
             @endif
 
-            <h1 class="product-name">{{ $product->name }}</h1>
-            <p class="product-price">{{ number_format($product->price, 0, ',', ' ') }} XOF</p>
+            <h1 class="product-name" style="margin-bottom: 20px;">{{ $product->name }}</h1>
+            <p class="product-price" style="margin-bottom: 20px;">{{ number_format($product->price, 0, ',', ' ') }} XOF</p>
 
             <div class="cart-quantity-wrapper" data-id="{{ $product->id }}">
                 <button class="add-to-cart-btn">Ajouter au panier</button>
             </div>
             <!-- <a href="#" class="contact-advisor-link">Contacter un conseiller</a> -->
-            <a href="#" id='btnVoirpanier' class="panier-advisor-link">Voir panier</a>
-
-            <div class="product-description">
-                <p>{{ Str::limit($product->description, 300, '...') }}</p>
-                <button class="view-more-btn">Voir plus</button>
-            </div>
+            <a href="#" id='btnVoirpanier' onclick="history.back(); return false;" class="panier-advisor-link">Continuer mes achats</a>
 
             <!-- Accordéons -->
             <div class="accordion">
                 <div class="accordion-item">
-                    <button class="accordion-header">Sustainability</button>
+                    <button class="accordion-header">Descriptions</button>
+                    <div class="product-description">
+                        <p>{{ Str::limit($product->description, 300, '...') }}</p>
+                        <button class="view-more-btn">Voir plus</button>
+                    </div>
                     <div class="accordion-content">
-                        <p>Produit respectueux de l'environnement.</p>
+                        @php
+                        $limited = Str::limit($product->slug, 300, '...');
+                        $parts = explode(';', $limited);
+                        @endphp
+                        <ul>
+                            @foreach ($parts as $part)
+                            <li>{{ trim($part) }}</li>
+                            @endforeach
+                        </ul>
+
                     </div>
                 </div>
-                <div class="accordion-item">
-                    <button class="accordion-header">Product Care</button>
-                    <div class="accordion-content">
-                        <p>Conserver dans un endroit sec et propre.</p>
-                    </div>
-                </div>
-                <div class="accordion-item">
-                    <button class="accordion-header">Services en magasin</button>
-                    <div class="accordion-content">
-                        <p>Assistance et conseils sur rendez-vous.</p>
-                    </div>
-                </div>
+                <!--<div class="accordion-item">-->
+                <!--    <button class="accordion-header">Product Care</button>-->
+                <!--    <div class="accordion-content">-->
+                <!--        <p>Conserver dans un endroit sec et propre.</p>-->
+                <!--    </div>-->
+                <!--</div>-->
+                <!--<div class="accordion-item">-->
+                <!--    <button class="accordion-header">Services en magasin</button>-->
+                <!--    <div class="accordion-content">-->
+                <!--        <p>Assistance et conseils sur rendez-vous.</p>-->
+                <!--    </div>-->
+                <!--</div>-->
             </div>
         </div>
     </section>

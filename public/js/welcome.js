@@ -85,40 +85,57 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- AJAX AUTH FORMS ---
     const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    function handleAuthForm(form, successCallback) {
-        if (!form) return;
-        form.addEventListener('submit', async e => {
-            e.preventDefault();
-            const btn = form.querySelector('button[type="submit"]');
-            btn.disabled = true; btn.innerText = 'Veuillez patienter...';
+    async function handleAuthForm(form, successCallback) {
+    if (!form) return;
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const btn = form.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.innerText = 'Veuillez patienter...';
 
-            try {
-                const formData = new FormData(form);
-                const res = await fetch(form.action, {
-                    method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': csrf, 'Accept':'application/json' },
-                    body: formData
-                });
-                const data = await res.json();
-                if (res.ok) successCallback?.(data);
-                else if (data.errors) {
-                    Object.keys(data.errors).forEach(key => {
-                        const input = form.querySelector(`[name="${key}"]`);
-                        if (input) {
-                            let div = input.nextElementSibling;
-                            if(!div || !div.classList.contains('input-error')) {
-                                div = document.createElement('div');
-                                div.classList.add('input-error');
-                                input.after(div);
-                            }
-                            div.style.display='block'; div.innerText = data.errors[key][0];
+        try {
+            const formData = new FormData(form);
+            const res = await fetch(form.action, {
+                method: 'POST',
+                headers: { 
+                    'X-CSRF-TOKEN': csrf, 
+                    'Accept':'application/json' 
+                },
+                body: formData
+            });
+
+            // Mettre à jour le token CSRF si Laravel l'envoie dans les en-têtes
+            const newCsrf = res.headers.get('X-CSRF-TOKEN');
+            if (newCsrf) csrf = newCsrf;
+
+            const data = await res.json();
+
+            if (res.ok) successCallback?.(data);
+            else if (data.errors) {
+                Object.keys(data.errors).forEach(key => {
+                    const input = form.querySelector(`[name="${key}"]`);
+                    if (input) {
+                        let div = input.nextElementSibling;
+                        if(!div || !div.classList.contains('input-error')) {
+                            div = document.createElement('div');
+                            div.classList.add('input-error');
+                            input.after(div);
                         }
-                    });
-                } else if (data.message) alert(data.message);
-            } catch(err) { console.error(err); alert('Erreur réseau, réessayez.'); }
-            finally { btn.disabled = false; btn.innerText = form.dataset.submitText || 'Envoyer'; }
-        });
-    }
+                        div.style.display='block'; 
+                        div.innerText = data.errors[key][0];
+                    }
+                });
+            } else if (data.message) alert(data.message);
+
+        } catch(err) { 
+            console.error(err); 
+            alert('Erreur réseau, réessayez.'); 
+        } finally { 
+            btn.disabled = false; 
+            btn.innerText = form.dataset.submitText || 'Envoyer'; 
+        }
+    });
+}
+
 
     handleAuthForm(document.getElementById('loginForm'), data => location.reload());
     handleAuthForm(document.getElementById('registerForm'), data => location.reload());

@@ -5,45 +5,37 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\SearchController;
+
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\WavePaymentController;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
-| Routes publiques (accÃ¨s libre)
+| Routes publiques
 |--------------------------------------------------------------------------
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-
 Route::get('/categorie/{id}', [CategoryController::class, 'Categories'])->name('category.categories');
-
-
-
-Route::get('/detailsProduct/{products}', [ProductController::class, 'show'])
-    ->name('product.show');
-
-// La vue 'search' doit probablement Ãªtre dans un contrÃ´leur, mais on la laisse pour l'instant
-
-
+Route::get('/detailsProduct/{products}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/search', [SearchController::class, 'searchPage']);
-
 Route::get('/search-products', [SearchController::class, 'search_products']);
+
 /*
 |--------------------------------------------------------------------------
-| Routes Panier (accessibles sans connexion)
+| Routes Panier (accessible sans connexion)
 |--------------------------------------------------------------------------
 */
-
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
 Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
 Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
-// ðŸ’¡ AmÃ©lioration: La logique de comptage devrait Ãªtre dans le contrÃ´leur ou un petit groupe de route
+// Compter le nombre d'articles dans le panier
 Route::get('/cart/count', function () {
     if (auth()->check()) {
         $cart = \App\Models\Carts::where('user_id', auth()->id())->where('status', 'active')->first();
@@ -55,33 +47,32 @@ Route::get('/cart/count', function () {
     return response()->json(['count' => $count]);
 });
 
+Route::get('/cart/sidebar', [CartController::class, 'loadSidebar']);
+
+// Routes session pour utilisateur non connecté
+Route::post('/cart/session/increase', [CartController::class, 'increaseSession'])->name('cart.session.increase');
+Route::post('/cart/session/decrease', [CartController::class, 'decreaseSession'])->name('cart.session.decrease');
+
 /*
 |--------------------------------------------------------------------------
-| Routes AuthentifiÃ©es (auth & verified)
+| Routes Authentifiées (auth & verified)
 |--------------------------------------------------------------------------
-| Les middlewares 'auth' et 'verified' sont appliquÃ©s Ã  l'ensemble du groupe.
 */
-
-// CORRECTION: Suppression de l'espace en trop avant 'verified'
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // Tableau de bord
-    // SUPPRESSION: Le middleware 'verified' est dÃ©jÃ  appliquÃ© par le groupe.
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
-    // Compte & profil
-    // SUPPRESSION: Le middleware 'auth' est dÃ©jÃ  appliquÃ© par le groupe.
-    Route::get('/compte', [ProfileController::class, 'compte'])
-        ->name('compte');
-
-    // Routes de ressources pour le profil (patch, delete, edit)
+    // Profil / compte
+    Route::get('/compte', [ProfileController::class, 'compte'])->name('compte');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Mettre ces routes POST dans un groupe si elles sont liÃ©es au panier/commandes
+    // Liste des commandes
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+
+    // Détail d'une commande
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
+    // Panier connecté
     Route::post('/cart/increase', [CartController::class, 'increase'])->name('cart.increase');
     Route::post('/cart/decrease', [CartController::class, 'decrease'])->name('cart.decrease');
 
@@ -89,9 +80,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
+    // Paiement Route
+    Route::get('/payment/{order_id}', [PaymentController::class, 'processPayment'])->name('payment.process');
+    Route::post('/payment/callback', [PaymentController::class, 'paymentCallback'])->name('payment.callback');
+
     // Paiement Wave
-    Route::get('/wave/pay/{order}', [WavePaymentController::class, 'pay'])->name('wave.pay');
-    Route::get('/wave/success/{order}', [WavePaymentController::class, 'success'])->name('wave.success');
+    Route::get('/wave/pay/{order}', [PaymentController::class, 'payConfirm'])->name('wave.pay');
+    Route::get('/wave/success/{order}', [PaymentController::class, 'success'])->name('wave.success');
+
+    // MTN
+    Route::get('/mtn/pay/{order}', [PaymentController::class, 'payWithMTN'])->name('mtn.pay');
+
+    // Orange
+    Route::get('/orange/pay/{order}', [PaymentController::class, 'payWithOrange'])->name('orange.pay');
 });
 
 /*
@@ -103,10 +104,9 @@ require __DIR__ . '/auth.php';
 
 /*
 |--------------------------------------------------------------------------
-| Fallback (page non trouvÃ©e)
+| Fallback (page non trouvé)
 |--------------------------------------------------------------------------
 */
-
 Route::fallback(function () {
     return redirect('/');
 });

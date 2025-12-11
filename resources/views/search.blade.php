@@ -62,11 +62,13 @@
     @include('partials.footer')
     <div class="overlay" id="overlay"></div>
 
-    @include('partials.allModal')
+    @include('partials.cart-sidebar')
+    @include('partials.AuthModal')
 
     <script src={{ asset("js/search.js") }} defer></script>
     <script src="{{ asset('js/detailsProduits.js') }}" defer></script>
     <script src="{{ asset('js/welcome.js') }}" defer></script>
+    <script src="{{ asset('js/cart.js') }}" defer></script>
 </body>
 
 </html>

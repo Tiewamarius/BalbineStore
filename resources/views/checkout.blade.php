@@ -77,6 +77,49 @@
             font-size: 0.9em;
         }
 
+        /* --------------- */
+        .payment-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin: 15px 0;
+        }
+
+        .payment-card {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            background: #fff;
+        }
+
+        .payment-card:hover {
+            border-color: #2d8cff;
+            background: #f4f9ff;
+        }
+
+        .payment-card img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .payment-card input[type="radio"] {
+            display: none;
+        }
+
+        .payment-card.active {
+            border-color: #2d8cff;
+            background: #e8f3ff;
+            box-shadow: 0 0 10px rgba(45, 140, 255, 0.4);
+        }
+
+        /* -------------- */
         .checkout-form input[type="text"],
         .checkout-form textarea,
         .checkout-form select {
@@ -156,27 +199,86 @@
                 @csrf
 
                 <h3>Informations personnelles</h3>
-                @if(Auth::check())
-                <p><strong>Nom complet :</strong> {{ Auth::user()->name }}</p>
-                <p><strong>Téléphone :</strong> {{ Auth::user()->phone }}</p>
-                <p><strong>Adresse :</strong> {{ Auth::user()->address }}</p>
-                @else
+
                 <label>Nom complet</label>
-                <input type="text" name="fullname" required>
+                <input type="text" name="fullname" value="{{ Auth::user()->name }}" required>
 
                 <label>Téléphone</label>
-                <input type="text" name="phone" required>
+                <input type="text" name="phone" value="{{ Auth::user()->phone }}" required>
 
-                <label>Adresse complète</label>
-                <textarea name="address" rows="2" required></textarea>
+                <!-- Vérifier si l'utilisateur a une adresse -->
+                @if(session('new_address'))
+                <label>Adresse complète de livraison</label>
+                <textarea name="delivery_address" rows="2" required></textarea>
+                <label>Code postal</label>
+                <input type="text" name="postal_code" placeholder="Code postal (facultatif)">
+
+                <label>Ville</label>
+                <input type="text" name="city" placeholder="Exemple: Abidjan" required>
+
+                <label>Pays</label>
+                <input type="text" name="country" value="Côte d'Ivoire" readonly>
+                @else
+                <!-- Afficher l'adresse existante -->
+                <p><strong>Adresse de livraison :</strong> {{ $address->street }}, {{ $address->city }}, {{ $address->country }}</p>
+                <input type="hidden" name="address_id" value="{{ $address->id }}">
                 @endif
 
                 <h3>Moyen de paiement</h3>
-                <select id="paymentMethod" name="payment_method" required>
-                    <option value="mtn">MTN Mobile Money</option>
-                    <option value="orange">Orange Money</option>
-                    <option value="wave">Wave Money</option>
-                </select>
+
+                <div class="payment-cards">
+
+                    <label class="payment-card">
+                        <input type="radio" name="payment_method" value="mtn" required>
+                        <img src="{{ asset('Images/payments/mtn-mobile-money-logo.png') }}" alt="MTN Money">
+                        <span>MTN Mobile Money</span>
+                    </label>
+
+                    <label class="payment-card">
+                        <input type="radio" name="payment_method" value="orange">
+                        <img src="/images/payments/Orange_Money_Logo.png" alt="Orange Money">
+                        <span>Orange Money</span>
+                    </label>
+
+                    <label class="payment-card">
+                        <input type="radio" name="payment_method" value="wave">
+                        <img src="/Images/payments/wave-mobile-money-logo.png" alt="Wave Money">
+                        <span>Wave Money</span>
+                    </label>
+
+                    <label class="payment-card">
+                        <input type="radio" name="payment_method" value="cash">
+                        <img src="/images/payments/cash-icon-transparent-19.png" alt="Paiement à la livraison">
+                        <span>Paiement à la livraison</span>
+                    </label>
+
+                </div>
+                <!-- <h3>Moyen de paiement</h3>
+
+                <div class="payment-options">
+
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="mtn" required>
+                        <span>MTN Mobile Money</span>
+                    </label>
+
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="orange">
+                        <span>Orange Money</span>
+                    </label>
+
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="wave">
+                        <span>Wave Money</span>
+                    </label>
+
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="cash">
+                        <span>Paiement à la livraison <img src="Images/logoCash.jpg" alt=""></span>
+                    </label>
+
+                </div>
+ -->
 
                 <button type="submit" class="checkout-btn">Confirmer et payer</button>
             </form>
@@ -203,40 +305,117 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('checkoutForm');
             const paymentSelect = document.getElementById('paymentMethod');
 
-            form.addEventListener('submit', function(e) {
-                if (paymentSelect.value === 'wave') {
+            form.addEventListener('submit', async (e) => {
+                const paymentMethod = paymentSelect.value;
+
+                // Si méthode de paiement spéciale → empêcher submit normal
+                if (['wave', 'mtn', 'orange', 'cash'].includes(paymentMethod)) {
                     e.preventDefault();
+
+                    // Empêcher double-submit
+                    form.querySelector('button[type="submit"]').disabled = true;
 
                     const formData = new FormData(form);
 
-                    fetch("{{ route('checkout.store') }}", {
+                    try {
+                        const res = await fetch("{{ route('checkout.store') }}", {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                             },
                             body: formData
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (!data.order_id) return alert(data.error || 'Erreur lors de la création de la commande.');
-
-                            const orderId = data.order_id;
-                            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-                            const isMobile = /android|iphone|ipad|ipod/i.test(userAgent);
-
-                            // Redirection Wave
-                            window.location.href = `/wave/pay/${orderId}`;
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            alert('Erreur lors de la création de la commande.');
                         });
+
+                        const data = await res.json();
+
+                        if (!data.order_id) {
+                            alert(data.error || "Erreur lors de la création de la commande.");
+                            form.querySelector('button[type="submit"]').disabled = false;
+                            return;
+                        }
+
+                        const orderId = data.order_id;
+
+                        // Redirection selon mode de paiement
+                        const redirectRoutes = {
+                            wave: `/wave/pay/${orderId}`,
+                            mtn: `/mtn/pay/${orderId}`,
+                            orange: `/orange/pay/${orderId}`,
+                            cash: `/compte`
+                        };
+
+                        window.location.href = redirectRoutes[paymentMethod];
+
+                    } catch (error) {
+                        console.error(error);
+                        alert("Erreur réseau. Vérifiez votre connexion.");
+                        form.querySelector('button[type="submit"]').disabled = false;
+                    }
                 }
             });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Effet card active
+            const cards = document.querySelectorAll('.payment-card');
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    cards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                });
+            });
+
+            // Gestion du submit pour paiement dynamique
+            const form = document.getElementById('checkoutForm');
+
+            form.addEventListener('submit', function(e) {
+                const checked = document.querySelector('input[name="payment_method"]:checked');
+                if (!checked) return;
+
+                const paymentMethod = checked.value;
+
+                // Paiement à la livraison → soumission normale
+                if (paymentMethod === 'cash') return;
+
+                // Wave, MTN, Orange → Ajax
+                e.preventDefault();
+
+                const formData = new FormData(form);
+
+                fetch("{{ route('checkout.store') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+
+                        if (!data.order_id) {
+                            alert(data.error || "Erreur lors de la création de la commande.");
+                            return;
+                        }
+
+                        const orderId = data.order_id;
+
+                        // Redirections
+                        if (paymentMethod === 'wave') window.location.href = `/wave/pay/${orderId}`;
+                        if (paymentMethod === 'mtn') window.location.href = `/mtn/pay/${orderId}`;
+                        if (paymentMethod === 'orange') window.location.href = `/orange/pay/${orderId}`;
+
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert("Erreur serveur.");
+                    });
+            });
+
         });
     </script>
 

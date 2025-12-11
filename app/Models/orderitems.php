@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class orderitems extends Model
+class OrderItems extends Model
 {
     use HasFactory;
 
@@ -25,19 +25,19 @@ class orderitems extends Model
     // L’article appartient à une commande
     public function order()
     {
-        return $this->belongsTo(orders::class);
+        return $this->belongsTo(Orders::class);
     }
 
     // L’article correspond à un produit
     public function product()
     {
-        return $this->belongsTo(products::class);
+        return $this->belongsTo(Products::class);
     }
 
     // L’article peut être lié à une variante
     public function variant()
     {
-        return $this->belongsTo(product_variants::class, 'product_variant_id');
+        return $this->belongsTo(ProductVariant::class, 'product_variant_id');
     }
 
     /**

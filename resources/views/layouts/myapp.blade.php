@@ -4,15 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'BALBINE STORE')</title>
+    <title>COMPTE</title>
     <link rel="icon" type="image/png" href="{{ asset('images/cropped-logo-odedis-store-32x32.Jpg') }}">
-    <meta name="description" content="@yield('description', 'Balbine Store — Produits d\'entretien professionnels et grand public.')">
+    <meta name="description" content="Balbine Store — Produits d'entretien professionnels et grand public. Découvrez notre sélection.">
+    <meta property="og:title" content="Balbine Store">
+    <meta property="og:description" content="Produits d'entretien et matériel professionnel.">
+    <meta property="og:image" content="{{ asset('images/BALBINE-STORE-1--1536x768.jpg') }}">
+    <meta name="robots" content="index,follow">
+
+    <link rel="stylesheet" href="{{ asset('css/compte.css') }}">
     <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
     <link rel="stylesheet" href="{{ asset('css/search.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    @stack('styles')
-    <script src="{{ asset('js/welcome.js') }}" defer></script>
-    @stack('scripts')
 </head>
 
 <body>
@@ -34,9 +38,10 @@
             </a>
         </div>
 
-        <a href="{{ url('/') }}">
+        <a href="{{ url('/') }}" class="logo">
             <div class="hero-center">
-                <h1 class="logo">BALBINE STORE</h1>
+                <img src="{{ asset('/Images/logoBalbineSTORE.png') }}" alt="Balbine Store" class="logo-img">
+
             </div>
         </a>
 
@@ -77,7 +82,7 @@
 
                 @auth
                 @php
-                $cartCount = \App\Models\Carts::where('user_id', auth()->id())
+                $cartCount = \App\Models\carts::where('user_id', auth()->id())
                 ->where('status', 'active')
                 ->withSum('items as total_qty', 'quantity')
                 ->first()
@@ -100,12 +105,12 @@
             <button id="closeMenu">✕</button>
         </header>
         <ul>
-            <li><a href="#">Produits d'entretien</a></li>
-            <li><a href="#">Produits professionnels</a></li>
-            <li><a href="#">Matériel</a></li>
-            <li><a href="#">Machines</a></li>
-            <li><a href="#">Hygiène & sanitaires</a></li>
-            <li><a href="#">Écologiques</a></li>
+            <li><a href="{{ route('category.categories', 1) }}">Nettoyages & Entretiens Lacaux</a></li>
+            <li><a href="{{ route('category.categories', 2) }}">Traitement Phytosanitaire</a></li>
+            <li><a href="{{ route('category.categories', 3) }}">Paysagisme & Jardinage</a></li>
+            <li><a href="{{ route('category.categories', 4) }}">Parfumage d'Espace</a></li>
+            <li><a href="https://www.balbine.net" target="_blank">LES SERVICES BALBINE.NET</a></li>
+            <!-- <li><a href="#">Écologiques</a></li> -->
         </ul>
         <div class="footer">
             <p>Besoin d'aide ?</p>
@@ -113,329 +118,16 @@
         </div>
     </nav>
 
-    <!-- Contact sidebar -->
-    <aside class="contact-sidebar" id="contactSidebar">
-        <header class="contact-header">
-            <h2 class="contact-title">Contactez-nous</h2>
-            <button id="closeContactSidebar" class="close-btn" aria-label="Fermer le panneau de contact">
-                &times;
-            </button>
-        </header>
+    <div class="overlay" id="overlay"></div>
 
-        <div class="contact-body">
-            <p class="contact-intro">
-                Où que vous soyez, les conseillers clientèle Balbine Store seront ravis de vous aider.
-            </p>
+    @include('partials.AuthModal')
+    @include('partials.cart-sidebar')
 
-            <ul class="contact-options">
-                <li>
-                    <a href="tel:+33977404077">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                            fill="#000000">
-                            <path
-                                d="m720-560-58-56 64-64H520v-80h206l-62-62 56-58 160 162-160 158Zm78 440q-125 0-247-54.5T329-329Q229-429 174.5-551T120-798q0-18 12-30t30-12h162q14 0 25 9.5t13 22.5l26 140q2 16-1 27t-11 19l-97 98q20 37 47.5 71.5T387-386q31 31 65 57.5t72 48.5l94-94q9-9 23.5-13.5T670-390l138 28q14 4 23 14.5t9 23.5v162q0 18-12 30t-30 12ZM241-600l66-66-17-94h-89q5 41 14 81t26 79Zm358 358q39 17 79.5 27t81.5 13v-88l-94-19-67 67ZM241-600Zm358 358Z" />
-                        </svg>
-                        <span>+33 9 77 40 40 77</span>
-                    </a>
-                </li>
+    <script src="{{ asset('js/detailsProduits.js') }}" defer></script>
+    <script src="{{ asset('js/welcome.js') }}" defer></script>
+    <script src="{{ asset('js/cart.js') }}" defer></script>
+    <script src="{{ asset('js/compte.js') }}" defer></script>
 
-                <li>
-                    <a href="mailto:contact@balbine.store">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                            fill="#000000">
-                            <path
-                                d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm320-280L160-640v320h640v-320L480-440Zm0-80 320-200H160l320 200ZM160-640v-80v80Z" />
-                        </svg>
-                        <span>Envoyer un e-mail</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://wa.me/0143633011" target="_blank">
-                        <img src="{{ asset('whatsapp-icon.png') }}" alt="WhatsApp Icon" style="width: 24px; height: 24px;">
-                        <span>WhatsApp</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://m.me/votre_page_facebook" target="_blank">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                            fill="#000000">
-                            <path
-                                d="M480-80q-137 0-255-63.5T40-348q-18-56-25.5-104T10-539v-136q0-100 70-170t170-70h478q100 0 170 70t70 170v200q0 100-70 170t-170 70H327L148-80h332ZM190-760q-48 0-82 34t-34 82v120q0 100 50 162.5T365-275l41 41 43 40v-195q0-50 35-85t85-35h172q48 0 82-34t34-82v-120q0-48-34-82t-82-34H244q-48 0-54 12v-12Zm0 0v-12h760q48 0 82 34t34 82v120q0 48-34 82t-82 34H244q-48 0-82 34t-34 82v146l-44 44q-11 11-23 16.5t-24 5.5q-16 0-30-8t-24-22q-10-14-15-32t-5-38v-136q0-100 70-170t170-70h478q48 0 82-34t34-82v-120q0-48-34-82t-82-34H244q-48 0-82 34t-34 82Z" />
-                        </svg>
-                        <span>Facebook Messenger</span>
-                    </a>
-                </li>
-                <!-- <li class="disabled-option">
-                    <a href="#">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                            fill="#000000">
-                            <path
-                                d="M510-160q32 0 61-12t53-35l14-16q12-14 18-35.5t6-46.5v-180q0-33 23.5-56.5T840-570q33 0 56.5 23.5T920-490v200q0 31-7 55t-25 45l-14 16q-19 22-54 41t-77 24q-22 5-47 5h-24v80h-80v-80q-40-10-74-29.5T380-160h130Zm-40-80q-50 0-86-35.5T340-360q0-50 36-86t86-36q50 0 86 36t36 86q0 50-36 85.5T470-240Zm0-80q17 0 28.5-11.5T510-360q0-17-11.5-28.5T470-400q-17 0-28.5 11.5T430-360q0 17 11.5 28.5T470-320ZM120-120v-80h200v80H120Zm-40-80v-80h400v80H80Zm140-120q-33 0-56.5-23.5T120-440v-200q0-33 23.5-56.5T200-720h560q33 0 56.5 23.5T840-640v120h-80v-80H200v200h150q40 0 84 10.5t82 32.5q-15 48-38 88.5T452-240h-82v40h-40v40h-40Z" />
-                        </svg>
-                        <span>Service Clients Sourds et Malentendants</span>
-                    </a>
-                    <p class="disabled-message">Bientôt disponible</p>
-                </li> -->
-            </ul>
-
-            <div class="contact-footer">
-                <a href="#" class="help-link">Besoin d'aide ?</a>
-            </div>
-        </div>
-    </aside>
-    <!-- modale login/register -->
-    <aside class="contact-sidebar login-sidebar" id="loginSidebar">
-        <header class="contact-header">
-            <h2 class="contact-title" id="loginSidebarTitle">Login</h2>
-            <button id="closeLoginSidebar" class="close-btn" aria-label="Fermer le panneau de connexion">
-                &times;
-            </button>
-        </header>
-        <div class="contact-body">
-
-            <div id="loginView" class="auth-view active">
-                <h3 style="font-size: 16px; margin-bottom: 20px;">J'ai déjà un Compte</h3>
-
-                <form action="{{ route('login') }}" method="POST" id="loginForm" novalidate>
-                    @csrf
-                    <p style="text-align: right; font-size: 12px; color: #777;">Champs obligatoires*</p>
-
-                    <label for="login-email">E-mail*</label>
-                    <input type="email" id="login-email" name="email" value="{{ old('email') }}" required placeholder="example@email.com">
-                    @error('email')
-                    <div class="input-error">{{ $message }}</div>
-                    @enderror
-
-                    <label for="login-password">Mot de passe*</label>
-                    <div class="password-field" style="position: relative; margin-bottom: 10px;">
-                        <input type="password" id="login-password" name="password" required>
-                        <span class="password-toggle" role="button" aria-label="Afficher/masquer le mot de passe">...</span>
-                    </div>
-                    <a href="#" class="forgot-password-link">Mot de passe oublié ?</a>
-                    <br>
-                    @error('password')
-                    <div class="input-error">{{ $message }}</div>
-                    @enderror
-
-
-                    <button type="submit" class="auth-btn">M'identifier</button>
-                </form>
-
-
-                <hr class="separator">
-
-                <h3 class="switch-title">Nouveau Client</h3>
-                <p class="switch-text">
-                    Créez votre espace Balbine Store pour une expérience d'achat personnalisée.
-                </p>
-                <button class="secondary-btn switch-to-register">
-                    Créer mon compte
-                </button>
-            </div>
-
-
-            <div id="registerView" class="auth-view">
-                <h3 style="font-size: 16px; margin-bottom: 20px;">Créer mon Compte</h3>
-
-                <form action="{{ route('register') }}" method="POST" id="registerForm">
-                    @csrf
-                    <p style="text-align: right; font-size: 12px; color: #777;">Champs obligatoires*</p>
-
-                    <label for="register-lastname" style="display: block; font-size: 14px; margin-bottom: 5px;">Nom (ou Prenoms)*</label>
-                    <input type="text" id="register-lastname" name="name" required placeholder="Votre nom">
-
-                    <label for="register-lastname" style="display: block; font-size: 14px; margin-bottom: 5px;">Contact</label>
-                    <input type="tel" id="register-lastname" name="phone" required placeholder="Contact">
-
-                    <label for="register-email" style="display: block; font-size: 14px; margin-bottom: 5px; margin-top: 15px;">E-mail*</label>
-                    <input type="email" id="register-email" name="email" required placeholder="example@email.com">
-
-                    <label for="register-password" style="display: block; font-size: 14px; margin-bottom: 5px; margin-top: 15px;">Mot de passe*</label>
-                    <div class="password-field" style="position: relative; margin-bottom: 10px;">
-                        <input type="password" id="register-password" name="password" required>
-                        <span class="password-toggle">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#777">
-                                <path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Z" />
-                            </svg>
-                        </span>
-                    </div>
-                    <label for="register-password" style="display: block; font-size: 14px; margin-bottom: 5px; margin-top: 15px;">Retaper Mot de passe*</label>
-                    <div class="password-field" style="position: relative; margin-bottom: 10px;">
-                        <input type="password" id="register-password" name="password_confirmation" required>
-                        <span class="password-toggle">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#777">
-                                <path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Z" />
-                            </svg>
-                        </span>
-                    </div>
-                    <p style="font-size: 12px; color: #777; margin-bottom: 30px;">
-                        En créant un compte, vous acceptez nos conditions générales et notre politique de confidentialité.
-                    </p>
-
-                    <button type="submit" class="auth-btn">
-                        S'inscrire
-                    </button>
-                </form>
-
-
-                <hr class="separator">
-
-                <h3 class="switch-title">Déjà client ?</h3>
-                <p class="switch-text">
-                    Si vous avez déjà un compte, identifiez-vous pour continuer.
-                </p>
-                <button class="secondary-btn switch-to-login">
-                    M'identifier
-                </button>
-            </div>
-        </div>
-        <br>
-        <br>
-        <br>
-    </aside>
-
-    <!-- Modale Reset Password -->
-    <aside class="contact-sidebar login-sidebar" id="resetPasswordSidebar">
-        <header class="contact-header">
-            <h2 class="contact-title">Réinitialiser le mot de passe</h2>
-            <button id="closeResetSidebar" class="close-btn" aria-label="Fermer le panneau de réinitialisation">
-                &times;
-            </button>
-        </header>
-        <div class="contact-body">
-            <p style="margin-bottom: 20px;">
-                Entrez votre adresse email pour recevoir un lien de réinitialisation du mot de passe.
-            </p>
-            <form action="#" method="post" id="resetPasswordForm">
-                <label for="reset-email" style="display: block; font-size: 14px; margin-bottom: 5px;">E-mail*</label>
-                <input type="email" id="reset-email" name="email" required placeholder="example@email.com">
-
-                <button type="submit" class="auth-btn" style="margin-top: 20px;">
-                    Envoyer le lien
-                </button>
-            </form>
-            <hr class="separator">
-            <button class="secondary-btn switch-to-login">
-                Retour à la connexion
-            </button>
-        </div>
-    </aside>
-
-    <!-- Modale confirmation -->
-    <aside class="contact-sidebar login-sidebar" id="newPasswordSidebar">
-        <header class="contact-header">
-            <h2 class="contact-title">Créer un nouveau mot de passe</h2>
-            <button id="closeNewPasswordSidebar" class="close-btn" aria-label="Fermer la modale nouveau mot de passe">
-                &times;
-            </button>
-        </header>
-        <div class="contact-body">
-            <p style="margin-bottom: 20px;">
-                Saisissez votre nouveau mot de passe et confirmez-le.
-            </p>
-            <form action="#" method="post" id="newPasswordForm">
-                <input type="hidden" id="reset-token" name="token" value=""> <!-- Token depuis l’URL -->
-
-                <label for="new-password" style="display: block; font-size: 14px; margin-bottom: 5px;">Nouveau mot de passe*</label>
-                <div class="password-field" style="position: relative; margin-bottom: 10px;">
-                    <input type="password" id="new-password" name="password" required>
-                    <span class="password-toggle">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#777">
-                            <path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-174 0-337-88.5T40-500q101-137 264-225.5T480-814q174 0 337 88.5T920-500q-101 137-264 225.5T480-192Zm0-320Z" />
-                        </svg>
-                    </span>
-                </div>
-
-                <label for="new-password-confirm" style="display: block; font-size: 14px; margin-bottom: 5px; margin-top: 15px;">Confirmer le mot de passe*</label>
-                <div class="password-field" style="position: relative; margin-bottom: 20px;">
-                    <input type="password" id="new-password-confirm" name="password_confirmation" required>
-                    <span class="password-toggle">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#777">
-                            <path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-174 0-337-88.5T40-500q101-137 264-225.5T480-814q174 0 337 88.5T920-500q-101 137-264 225.5T480-192Zm0-320Z" />
-                        </svg>
-                    </span>
-                </div>
-
-                <button type="submit" class="auth-btn">Modifier le mot de passe</button>
-            </form>
-        </div>
-    </aside>
-
-    <!-- Modale Wishlist -->
-
-    <aside class="contact-sidebar login-sidebar" id="wishlistSidebar">
-        <header class="contact-header">
-            <h2 class="contact-title">Ma Liste de Souhaits</h2>
-            <button id="closeWishlistSidebar" class="close-btn" aria-label="Fermer la wishlist">
-                &times;
-            </button>
-        </header>
-        <div class="contact-body">
-            <div class="not-logged">
-                <p>Connectez-vous pour voir votre liste de souhaits.</p>
-                <button class="auth-btn" data-modal="login">Se connecter</button>
-            </div>
-        </div>
-    </aside>
-
-
-    <!-- Modale Panier -->
-    <aside class="contact-sidebar cart-sidebar" id="cartSidebar">
-        <header class="contact-header">
-            <h2 class="contact-title">Mon Panier</h2>
-            <button id="closeCartSidebar" class="close-btn" aria-label="Fermer le panier">&times;</button>
-        </header>
-
-        <div class="contact-body">
-            @guest
-            <!-- Utilisateur non connecté -->
-            <div class="not-logged">
-                <p>Connectez-vous pour accéder à votre panier.</p>
-                <button class="auth-btn" data-modal="login">Se connecter</button>
-            </div>
-            @else
-            <!-- Contenu du panier -->
-            @php
-            $cart = \App\Models\Carts::with('items.product')
-            ->where('user_id', auth()->id())
-            ->where('status', 'active')
-            ->first();
-            @endphp
-
-            @if($cart && $cart->items->count())
-            <div class="cart-items">
-                @foreach($cart->items as $item)
-                <div class="cart-item">
-                    <img src="{{ asset('storage/' . $item->product->image) }}" alt="{{ $item->product->name }}" class="cart-item-img">
-                    <div class="cart-item-info">
-                        <h4 class="cart-item-name">{{ $item->product->name }}</h4>
-                        <p class="cart-item-price">{{ number_format($item->unit_price, 0, ',', ' ') }} F</p>
-                        <div class="cart-item-qty">
-                            <button class="qty-btn decrease" data-id="{{ $item->product->id }}">−</button>
-                            <span class="quantity">{{ $item->quantity }}</span>
-                            <button class="qty-btn increase" data-id="{{ $item->product->id }}">+</button>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-
-            <div class="cart-footer">
-                <p class="cart-total">
-                    Total : <strong>{{ number_format($cart->total, 0, ',', ' ') }} F</strong>
-                </p>
-                <a href="{{ route('cart.index') }}" class="view-cart-btn">Voir le panier</a>
-                <a href="{{ route('checkout') }}" class="checkout-btn">Commander</a>
-            </div>
-            @else
-            <!-- Panier vide -->
-            <div class="empty-cart">
-                <p>Votre panier est vide pour le moment.</p>
-            </div>
-            @endif
-            @endguest
-        </div>
-    </aside>
 </body>
 
 </html>
