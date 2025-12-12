@@ -7,6 +7,10 @@ use App\Models\Carts;
 use App\Models\Orders;
 use App\Models\OrderItems;
 use App\Models\Addresses;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\OrderUserNotification;
+use App\Mail\OrderAdminNotification;
 
 class CheckoutController extends Controller
 {
@@ -23,7 +27,6 @@ class CheckoutController extends Controller
             ->where('status', 'active')
             ->first();
 
-        // Vérification du panier
         if (!$cart || $cart->items->count() == 0) {
             return redirect()->route('compte')->with('error', 'Votre panier est vide.');
         }
@@ -38,22 +41,41 @@ class CheckoutController extends Controller
         return view('checkout', compact('cart', 'address'));
     }
 
-
-
     /**
      * ------------------------------
-     *   CREATION DE LA COMMANDE
+     *   CREATION DE LA COMMANDE OU PAIEMENT EXISTANT
      * ------------------------------
      */
     public function store(Request $request)
     {
-        // 1) Validation
+        // Paiement d'une commande EXISTANTE
+        if ($request->filled('order_id')) {
+            $order = Orders::with('items.product')->find($request->order_id);
+
+            if (!$order) {
+                return response()->json(['error' => 'Commande introuvable.']);
+            }
+
+            if ($order->payment_status === 'paid') {
+                return response()->json(['error' => 'Cette commande a déjà été payée.']);
+            }
+
+            // Changer uniquement le moyen de paiement
+            $order->update([
+                'payment_method' => $request->payment_method,
+            ]);
+
+            return response()->json([
+                'order_id' => $order->id
+            ]);
+        }
+
+        // 1) Validation pour nouvelle commande
         $validated = $request->validate([
             'fullname'        => 'required|string|max:255',
             'phone'           => 'required|string|max:20',
             'address_id'      => 'nullable|exists:addresses,id',
 
-            // Si pas d'adresse existante, alors adresse obligatoire :
             'delivery_address' => 'required_without:address_id|string|max:255',
             'city'            => 'required_without:address_id|string|max:100',
             'postal_code'     => 'nullable|string|max:20',
@@ -61,7 +83,6 @@ class CheckoutController extends Controller
 
             'payment_method'  => 'required|in:mtn,orange,wave',
         ]);
-
 
         // 2) Récupération du panier
         $cart = Carts::with('items.product')
@@ -73,10 +94,8 @@ class CheckoutController extends Controller
             return back()->with('error', 'Panier introuvable.');
         }
 
-
         // 3) Récupération ou création d’adresse
         if (empty($validated['address_id'])) {
-            // → Création d’une nouvelle adresse
             $address = Addresses::create([
                 'user_id'     => auth()->id(),
                 'type'        => 'livraison',
@@ -87,23 +106,16 @@ class CheckoutController extends Controller
                 'phone'       => $validated['phone'],
             ]);
         } else {
-            // → Utiliser l’adresse existante
             $address = Addresses::find($validated['address_id']);
             if (!$address) {
                 return back()->with('error', 'Adresse non trouvée.');
             }
         }
 
-
         // 4) Calculs des montants
-        $subtotal = $cart->items->sum(
-            fn($item) =>
-            $item->quantity * $item->unit_price
-        );
-
+        $subtotal = $cart->items->sum(fn($item) => $item->quantity * $item->unit_price);
         $shippingFee = 1000; // Frais fixes
         $total = $subtotal + $shippingFee;
-
 
         // 5) Création de la commande
         try {
@@ -122,12 +134,12 @@ class CheckoutController extends Controller
             // 6) Ajout des items
             foreach ($cart->items as $item) {
                 OrderItems::create([
-                    'order_id'          => $order->id,
-                    'product_id'        => $item->product->id,
+                    'order_id'           => $order->id,
+                    'product_id'         => $item->product->id,
                     'product_variant_id' => $item->product_variant_id,
-                    'quantity'          => $item->quantity,
-                    'unit_price'        => $item->unit_price,
-                    'total_price'       => $item->quantity * $item->unit_price,
+                    'quantity'           => $item->quantity,
+                    'unit_price'         => $item->unit_price,
+                    'total_price'        => $item->quantity * $item->unit_price,
                 ]);
             }
 
@@ -135,12 +147,41 @@ class CheckoutController extends Controller
             $cart->items()->delete();
             $cart->update(['status' => 'completed']);
 
-            // Réponse JSON pour redirection JS
+            // 8) Envoi des emails
+            try {
+                Mail::to(auth()->user()->email)->send(new OrderUserNotification($order));
+                Mail::to('info@balbine.com')->send(new OrderAdminNotification($order));
+            } catch (\Exception $emailError) {
+                Log::error('Erreur envoi email : ' . $emailError->getMessage());
+            }
+
             return response()->json(['order_id' => $order->id]);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Erreur lors de la création de la commande : ' . $e->getMessage()
             ]);
         }
+    }
+
+    /**
+     * ------------------------------
+     * Paiement d'une commande existante
+     * ------------------------------
+     */
+    public function payExistingOrder($orderId)
+    {
+        $order = Orders::with('items.product', 'address')->findOrFail($orderId);
+
+        if ($order->payment_status === 'paid') {
+            return redirect()->route('orders.show', $order->id)
+                ->with('info', 'Cette commande a déjà été payée.');
+        }
+
+        // On envoie à la même vue checkout
+        return view('checkout', [
+            'cart' => null,        // différencie panier vs commande
+            'order' => $order,     // commande existante
+            'address' => $order->address
+        ]);
     }
 }

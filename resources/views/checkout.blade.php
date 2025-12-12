@@ -281,11 +281,16 @@
  -->
 
                 <button type="submit" class="checkout-btn">Confirmer et payer</button>
+                @if(isset($order))
+                <input type="hidden" name="order_id" value="{{ $order->id }}">
+                @endif
             </form>
 
             <div class="checkout-summary">
                 <h3>Votre commande</h3>
 
+                {{-- Paiement depuis le PANIER --}}
+                @if(isset($cart) && $cart)
                 @foreach($cart['items'] as $item)
                 <div class="summary-item">
                     <span>{{ $item['product']['name'] }}</span>
@@ -299,6 +304,25 @@
                     Total :
                     <strong>{{ number_format($cart['total'], 0, ',', ' ') }} F</strong>
                 </p>
+
+                {{-- Paiement d'une COMMANDE EXISTANTE --}}
+                @elseif(isset($order))
+
+                @foreach($order->items as $item)
+                <div class="summary-item">
+                    <span>{{ $item->product->name }}</span>
+                    <span>{{ $item->quantity }} × {{ number_format($item->unit_price, 0, ',', ' ') }} F</span>
+                </div>
+                @endforeach
+
+                <hr>
+
+                <p class="summary-total">
+                    Total :
+                    <strong>{{ number_format($order->total, 0, ',', ' ') }} F</strong>
+                </p>
+                @endif
+
             </div>
 
         </div>

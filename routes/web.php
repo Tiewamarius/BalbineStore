@@ -72,13 +72,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Détail d'une commande
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 
+    // Annuler une commande
+    Route::put('/orders/{id}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+
+    // Repasser une commande (reorder)
+    Route::get('/order/{order}/reorder', [OrderController::class, 'reorder'])->name('orders.reorder');
+
     // Panier connecté
     Route::post('/cart/increase', [CartController::class, 'increase'])->name('cart.increase');
     Route::post('/cart/decrease', [CartController::class, 'decrease'])->name('cart.decrease');
 
-    // Checkout
+    // Checkout pour panier actif
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+    // Checkout pour payer une commande existante
+    Route::get('/checkout/order/{order}', [CheckoutController::class, 'payExistingOrder'])
+        ->name('checkout.order');
 
     // Paiement Route
     Route::get('/payment/{order_id}', [PaymentController::class, 'processPayment'])->name('payment.process');

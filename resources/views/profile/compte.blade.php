@@ -193,7 +193,7 @@
                                 <span class="badge 
                                         @if($order->status == 'livré') bg-success
                                         @elseif($order->status == 'pending') bg-warning
-                                        @elseif($order->status == 'annulé') bg-danger
+                                        @elseif($order->status == 'cancelled') bg-grey
                                         @endif">
                                     {{ ucfirst($order->status) }}
                                 </span>
@@ -207,7 +207,20 @@
                                 Détails
                             </a>
                         </div>
+                        <!-- Bouton annuler si la commande a moins de 3 jours -->
+                        @if($order->created_at->diffInDays(now()) < 3 && $order->status !== 'cancelled')
+                            <div class="order-actions ms-3">
+                                <form action="{{ route('orders.cancel', $order->id) }}" method="POST"
+                                    onsubmit="return confirm('Voulez-vous vraiment annuler cette commande ?');">
+                                    @csrf
+                                    @method('PUT')
 
+                                    <button class="btn-danger">
+                                        Annuler la commande
+                                    </button>
+                                </form>
+                            </div>
+                            @endif
                     </div>
                     @endforeach
                     @endforeach

@@ -57,7 +57,7 @@
         display: grid;
         grid-template-columns: 2fr 1fr;
         gap: 2rem;
-        margin-top: 4rem;
+        /* margin-top: 4rem; */
     }
 
     @media (max-width: 850px) {
@@ -140,6 +140,7 @@
     /* ===== Boutons fixes ===== */
 
     .fixed-bottom-buttons {
+        width: 35%;
         position: fixed;
         bottom: 20px;
         left: 50%;
@@ -167,7 +168,7 @@
         }
 
         .fixed-bottom-buttons {
-            flex-direction: column;
+            /* flex-direction: column; */
             bottom: 15px;
             width: 90%;
         }
@@ -251,11 +252,16 @@
 
 <!-- Boutons fixes -->
 <div class="fixed-bottom-buttons">
-    <a href="{{ route('orders.index') }}" class="btn btn-Back">Back</a>
+    <a href="{{ url('/compte#achats') }}" class="btn btn-Back">Back</a>
 
     @if($order->status !== 'paid')
-    <a href="{{ route('checkout', $order->id) }}" class="btn btn-Paid">Payer</a>
+    <a href="{{ route('checkout.order', $order->id) }}" class="btn btn-Paid">Payer</a>
+    @else
+    <a href="{{ route('orders.reorder', $order->id) }}" class="btn btn-Primary">Commander à nouveau</a>
     @endif
+
 </div>
+
+
 
 @endsection
