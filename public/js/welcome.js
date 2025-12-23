@@ -128,10 +128,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch(err) { 
             console.error(err); 
-            alert('Erreur réseau, réessayez.'); 
+            location.reload();
         } finally { 
             btn.disabled = false; 
-            btn.innerText = form.dataset.submitText || 'Envoyer'; 
+            btn.innerText = form.dataset.submitText || 'LOGIN'; 
         }
     });
 }

@@ -32,6 +32,7 @@
         .card-body {
             display: flex;
             flex-wrap: wrap;
+            margin-bottom: 50px;
             gap: 4%;
         }
 

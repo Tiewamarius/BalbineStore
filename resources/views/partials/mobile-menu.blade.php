@@ -13,6 +13,9 @@
     </ul>
     <div class="footer">
         <p>Besoin d'aide ?</p>
-        <a href="tel:+225 0709019999 ">+225 07 09 01 99 99 </a>
-    </div>
+
+        <div class="hero-right">
+            <a href="#" id="contactLinkDesktop">Contactez-nous</a>
+            <a href="tel:+225 0709019999 ">+225 07 09 01 99 99 </a>
+        </div>
 </nav>

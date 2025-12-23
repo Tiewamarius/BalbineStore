@@ -42,10 +42,6 @@
     <!-- end Navbar -->
 
     @yield('content')
-
-    <!-- chat tamplate -->
-
-    <!-- end tammplate chat -->
     <footer class="bg-gray-900 text-white text-center py-4">
       @include('adminauth.layouts.footer')
     </footer>

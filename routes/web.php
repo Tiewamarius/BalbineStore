@@ -111,6 +111,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 |--------------------------------------------------------------------------
 */
 require __DIR__ . '/auth.php';
+require __DIR__ . '/admins-auth.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -118,5 +119,8 @@ require __DIR__ . '/auth.php';
 |--------------------------------------------------------------------------
 */
 Route::fallback(function () {
+    if (auth()->guard('admin')->check()) {
+        return redirect('/admin/dashboard');
+    }
     return redirect('/');
 });

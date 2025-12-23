@@ -1677,7 +1677,7 @@ contact-sidebar {
 
     .hero-right a,
     .hero-right .icon {
-        display: none; /* masque les éléments trop larges */
+        /* display: none; masque les éléments trop larges */
     }
 
     /* ==== BANNIÈRE ==== */
