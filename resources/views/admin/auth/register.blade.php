@@ -21,11 +21,10 @@
     <!-- Nucleo Icons -->
     <link href="{{asset('../Admin-Dashboard/assets/css/nucleo-icons.css')}}" rel="stylesheet" />
     <link href="{{asset('.Admin-Dashboard/assets/css/nucleo-svg.css')}}" rel="stylesheet" />
-    <!-- Popper -->
-    <script src="https://unpkg.com/@popperjs/core@2"></script>
+
     <!-- Main Styling -->
     <link
-        href="{{asset('../Admin-Dashboard/assets/css/soft-ui-dashboard-tailwind.css?v=1.0.5')}}" rel="stylesheet" />
+        href="{{asset('../admin/assets/css/soft-ui-dashboard-tailwind.css?v=1.0.5')}}" rel="stylesheet" />
     <!-- Nepcha Analytics (nepcha.com) -->
     <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
     <script
@@ -34,8 +33,7 @@
         src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
 </head>
 
-<body
-    class="m-0 font-sans antialiased font-normal bg-white text-start text-base leading-default text-slate-500">
+<body class="m-0 font-sans antialiased font-normal bg-white text-start text-base leading-default text-slate-500">
 
     <main class="mt-0 transition-all duration-200 ease-soft-in-out">
         <section>
@@ -118,8 +116,7 @@
                                                 class="text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow"
                                                 placeholder="Confirmer le mot de passe"
                                                 aria-label="Confirm Password"
-                                                name="password_confirmation"
-                                                required autocomplete="new-password" />
+                                                name="password_confirmation" />
                                         </div>
 
                                         <div class="min-h-6 pl-6.92 mb-0.5 block">

@@ -6,6 +6,8 @@ use App\Http\Controllers\AdminAuth\AdminEmailVerificationNotificationController;
 use App\Http\Controllers\AdminAuth\AdminEmailVerificationPromptController;
 use App\Http\Controllers\AdminAuth\AdminNewPasswordController;
 use App\Http\Controllers\AdminAuth\AdminController;
+use App\Http\Controllers\AdminAuth\AdminProductController;
+use App\Http\Controllers\AdminAuth\AdminCommandController;
 use App\Http\Controllers\AdminAuth\AdminPasswordController;
 use App\Http\Controllers\AdminAuth\AdminPasswordResetLinkController;
 use App\Http\Controllers\AdminAuth\RegisteredAdminController;
@@ -43,12 +45,26 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
         ->name('admin.dashboard');
 
     /**
-     * Résidences
+     * Produits
      */
-    Route::get('residences', [AdminController::class, 'residences'])
-        ->name('admin.residences.index');
-    Route::get('residences/create', [AdminController::class, 'createResidence'])
+    // Route pour afficher le formulaire de création
+    Route::get('/products/create', [AdminProductController::class, 'create'])->name('products.create');
+
+    // Route pour afficher la liste (celle que vous utilisez pour votre tableau)
+    Route::get('all-products', [AdminProductController::class, 'allProducts'])->name('admin.pages.allproducts');
+
+    // Routes pour vos exports spécifiques (souvenez-vous de vos deux boutons)
+    Route::get('/products/export-all', [AdminProductController::class, 'exportAll'])->name('products.export.all');
+    Route::get('/products/export-delivery', [AdminProductController::class, 'exportForDelivery'])->name('products.export.delivery');
+
+    Route::get('/products/{id}', [AdminProductController::class, 'show'])->name('products.show');
+    Route::get('/products/{id}/edit', [AdminProductController::class, 'edit'])->name('products.edit');
+    Route::delete('/products/{id}', [AdminProductController::class, 'destroy'])->name('products.destroy');
+
+    // commandes
+    Route::get('residences/create', [AdminCommandController::class, 'createResidence'])
         ->name('admin.residences.create');
+
     Route::post('residences', [AdminController::class, 'storeResidence'])
         ->name('admin.residences.store');
     Route::get('residences/{residence}/edit', [AdminController::class, 'editResidence'])
