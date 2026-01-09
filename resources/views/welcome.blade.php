@@ -24,7 +24,7 @@
 <body>
     <section class="hero-banner">
         <video class="hero-bg" autoplay muted loop playsinline>
-            <source src="{{ asset('Streams/nettoyage.mp4') }}" type="video/mp4">
+            <source src="{{ asset('Streams/Pub.mp4') }}" type="video/mp4">
 
         </video>
 
@@ -132,7 +132,7 @@
             @foreach($categories as $category)
             <div class="product-card">
                 <div class="card-image-container">
-                    <img src="{{ $category->slug ? asset('storage/' . $category->slug) : asset('images/produc/default.jpg') }}"
+                    <img src="{{ $category->slug ? asset('Images/' . $category->slug) : asset('images/produc/default.jpg') }}"
                         alt="{{ $category->name }}"
                         class="product-image">
                 </div>

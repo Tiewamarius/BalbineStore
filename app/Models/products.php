@@ -10,8 +10,8 @@ class products extends Model
     use HasFactory;
     protected $table = 'products';
     protected $fillable = [
-        'Category_id',
-        'Brands_id',
+        'categories_id',
+        'brand_id',
         'name',
         'slug',
         'description',
@@ -25,6 +25,15 @@ class products extends Model
     /**
      * Relations
      */
+    public function category()
+    {
+        return $this->belongsTo(categories::class, 'categories_id');
+    }
+
+    public function brand()
+    {
+        return $this->belongsTo(brands::class, 'brand_id');
+    }
 
     // Un produit appartient à une catégorie
     public function categories()

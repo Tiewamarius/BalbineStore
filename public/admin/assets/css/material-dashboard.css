@@ -473,6 +473,7 @@ tfoot,
 tr,
 td,
 th {
+  text-align: center;
   border-color: inherit;
   border-style: solid;
   border-width: 0;
@@ -27108,7 +27109,6 @@ hr.horizontal.gray-light {
 
 .table td,
 .table th {
-  text-align: center;
   white-space: nowrap;
 }
 
