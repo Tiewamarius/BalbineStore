@@ -4,6 +4,7 @@ namespace App\Http\Controllers\AdminAuth;
 
 use App\Http\Controllers\Controller;
 use App\Models\orders;
+use App\Models\payments;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -29,8 +30,10 @@ class AdminOrdersController extends Controller
             ->latest()
             ->paginate($perPage)
             ->withQueryString();
+        $pendingOrdersCount = orders::where('status', 'pending')->count();;
 
-        return view('admin.pages.allOrders', compact('orders'));
+
+        return view('admin.pages.allOrders', compact('orders', 'pendingOrdersCount'));
     }
 
     /**
@@ -46,7 +49,7 @@ class AdminOrdersController extends Controller
     /**
      * Update statut commande
      */
-    public function updateStatus(Request $request, orders $order)
+    public function updateStatus(Request $request, Orders $order)
     {
         $request->validate([
             'status' => 'required|in:pending,confirmed,processing,shipped,delivered,cancelled'
@@ -56,8 +59,38 @@ class AdminOrdersController extends Controller
             'status' => $request->status
         ]);
 
-        return back()->with('success', 'Statut mis à jour');
+        // Si la commande est livrée / payée
+        if ($request->status === 'delivered') {
+
+            // 🎯 Paiement terminé
+            if ($order->payment) {
+                $order->payment->update(['status' => 'completed']);
+            } else {
+                payments::create([
+                    'order_id' => $order->id,
+                    'method'   => $order->payment_method ?? 'cash',
+                    'amount'   => $order->total,
+                    'status'   => 'completed',
+                ]);
+            }
+
+            // Mise à jour résumé commande
+            $order->update(['payment_status' => 'paid']);
+
+            // 🔄 Décrémentation du stock des produits
+            foreach ($order->items as $item) {
+                $product = $item->product;
+                if ($product) {
+                    $product->decrement('stock', $item->quantity); // décrémente le stock
+                }
+            }
+        }
+
+        return back()->with('success', 'Commande mise à jour avec succès et stock ajusté');
     }
+
+
+
 
     // Orders dun clients
     public function orders(User $user)

@@ -24,7 +24,7 @@ class payments extends Model
     // Un paiement appartient à une commande
     public function order()
     {
-        return $this->belongsTo(orders::class);
+        return $this->belongsTo(orders::class, 'order_id');
     }
 
     /**

@@ -4,19 +4,22 @@ namespace App\Http\Controllers\AdminAuth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\orders;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class AdminProfileController extends Controller
 {
     // Afficher le formulaire de profil
-    public function editAdmin()
+    public function edit()
     {
-        return view('admin.profileAdmin');
+
+        $pendingOrdersCount = orders::where('status', 'pending')->count();
+        return view('admin.profileAdmin', compact('pendingOrdersCount'));
     }
 
     // Mettre à jour le profil (nom, email)
-    public function updateAdmin(Request $request)
+    public function update(Request $request)
     {
         $admin = auth('admin')->user();
 
@@ -25,7 +28,7 @@ class AdminProfileController extends Controller
             'email' => 'required|email|max:255|unique:admins,email,' . $admin->id,
         ]);
 
-        $admin->updateAdmin([
+        $admin->update([
             'name'  => $request->name,
             'email' => $request->email,
         ]);
@@ -40,7 +43,7 @@ class AdminProfileController extends Controller
 
         $request->validate([
             'current_password'      => 'required',
-            'password'              => 'required|string|min:6|confirmed',
+            'password'              => 'required|string|min:8|confirmed',
         ]);
 
         // Vérifier mot de passe actuel
@@ -50,7 +53,7 @@ class AdminProfileController extends Controller
             ]);
         }
 
-        $admin->updateAdmin([
+        $admin->update([
             'password' => Hash::make($request->password),
         ]);
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\AdminAuth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\orders;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -24,8 +25,10 @@ class AdminCustomersController extends Controller
             ->latest()
             ->paginate($perPage)
             ->withQueryString();
+        $pendingOrdersCount = orders::where('status', 'pending')->count();;
 
-        return view('admin.pages.allCustomers', compact('customers'));
+
+        return view('admin.pages.allCustomers', compact('customers', 'pendingOrdersCount'));
     }
 
     // FORM CREATE

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AdminAuth;
 use App\Http\Controllers\Controller;
 use App\Models\products;
 use App\Models\brands;
+use App\Models\orders;
 use App\Models\categories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -26,8 +27,9 @@ class AdminProductController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate($perPage)
             ->withQueryString();
+        $pendingOrdersCount = orders::where('status', 'pending')->count();
 
-        return view('admin.pages.allProducts', compact('products'));
+        return view('admin.pages.allProducts', compact('products', 'pendingOrdersCount'));
     }
 
 

@@ -8,11 +8,11 @@ use App\Http\Controllers\AdminAuth\AdminNewPasswordController;
 use App\Http\Controllers\AdminAuth\AdminProfileController;
 use App\Http\Controllers\AdminAuth\AdminController;
 use App\Http\Controllers\AdminAuth\SalesController;
+use App\Http\Controllers\AdminAuth\AdminPaymentsController;
 use App\Http\Controllers\AdminAuth\NotificationsController;
 use App\Http\Controllers\AdminAuth\AdminProductController;
 use App\Http\Controllers\AdminAuth\AdminCustomersController;
 use App\Http\Controllers\AdminAuth\AdminOrdersController;
-use App\Http\Controllers\AdminAuth\AdminPaymentsController;
 use App\Http\Controllers\AdminAuth\AdminPasswordController;
 use App\Http\Controllers\AdminAuth\AdminPasswordResetLinkController;
 use App\Http\Controllers\AdminAuth\RegisteredAdminController;
@@ -30,6 +30,7 @@ Route::prefix('admin')->middleware('guest:admin')->group(function () {
 
     Route::post('login', [AdminAuthenticatedSessionController::class, 'store']);
 
+
     Route::get('forgot-password', [AdminPasswordResetLinkController::class, 'create'])
         ->name('admin.password.request');
 
@@ -46,8 +47,8 @@ Route::prefix('admin')->middleware('guest:admin')->group(function () {
 Route::prefix('admin')->middleware('auth:admin')->group(function () {
 
     // profil
-    Route::get('/admin/profile', [AdminProfileController::class, 'editAdmin'])->name('admin.profile.editAdmin');
-    Route::put('/admin/profile', [AdminProfileController::class, 'updateAdmin'])->name('admin.profile.updateAdmin');
+    Route::get('/admin/profile', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
+    Route::put('/admin/profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');
     Route::put('/admin/profile/password', [AdminProfileController::class, 'updatePassword'])->name('admin.profile.password');
 
 
@@ -67,6 +68,7 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
 
     Route::post('/admins/{admin}/reset-password', [AdminController::class, 'resetPassword'])
         ->name('admin.admins.reset-password');
+
     // Tableau de bord
     Route::get('dashboard', [AdminController::class, 'homes'])
         ->name('admin.dashboard');
@@ -113,7 +115,11 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::get('all-orders', [AdminOrdersController::class, 'SearchOrders'])
         ->name('admin.pages.allorders');
 
-
+    // order client
+    Route::get(
+        '/admin/customers/{user}/orders',
+        [AdminOrdersController::class, 'orders']
+    )->name('admin.customers.orders');
 
     // Payment
     Route::get('/admin/payments', [AdminPaymentsController::class, 'index'])
@@ -140,11 +146,7 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::delete('/admin/customers/{user}', [AdminCustomersController::class, 'destroy'])
         ->name('admin.customers.destroy');
 
-    // order client
-    Route::get(
-        '/admin/customers/{user}/orders',
-        [AdminOrdersController::class, 'orders']
-    )->name('admin.customers.orders');
+
 
 
 
@@ -168,12 +170,6 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::get('orders/{orders}/edit', [AdminOrdersController::class, 'editResidence'])
         ->name('admin.orders.edit');
 
-
-    Route::put('residences/{residence}', [AdminController::class, 'updateResidence'])
-        ->name('admin.residences.update');
-    Route::delete('residences/{residence}', [AdminController::class, 'destroyResidence'])
-        ->name('admin.residences.destroy');
-
     // sales
     Route::get('/sales', [SalesController::class, 'Sales'])
         ->name('admin.pages.sales');
@@ -182,46 +178,13 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     // Notifications
     Route::get('/no-tification', [NotificationsController::class, 'Notification'])
         ->name('admin.pages.notification');
-    /**
-     * Réservations
-     */
-    Route::get('bookings', [AdminController::class, 'index'])
-        ->name('admin.bookings.index');
-    Route::get('bookings/{booking}', [AdminController::class, 'showBooking'])
-        ->name('admin.bookings.show');
-    Route::get('bookings/{booking}/edit', [AdminController::class, 'editBooking'])
-        ->name('admin.bookings.edit');
-    Route::put('bookings/{booking}', [AdminController::class, 'updateBooking'])
-        ->name('admin.bookings.update');
-    Route::delete('bookings/{booking}', [AdminController::class, 'destroyBooking'])
-        ->name('admin.bookings.destroy');
-    Route::post('bookings/{booking}/approve', [AdminController::class, 'approveBooking'])
-        ->name('admin.bookings.approve');
-    Route::post('bookings/{booking}/reject', [AdminController::class, 'rejectBooking'])
-        ->name('admin.bookings.reject');
 
-    /**
-     * Clients
-     */
-    Route::get('clients', [AdminController::class, 'clients'])
-        ->name('admin.pages.allClient');
 
-    Route::get('clients/{client}/bookings', [AdminController::class, 'getClientBookings'])
-        ->name('admin.clients.bookings');
 
-    Route::get('clients/{client}', [AdminController::class, 'showClient'])
-        ->name('admin.clients.show');
-
-    Route::delete('clients/{client}', [AdminController::class, 'destroyClient'])
-        ->name('admin.clients.destroy');
 
     /**
      * Paiements
      */
-    Route::get('payments', [AdminController::class, 'payments'])
-        ->name('admin.payments.index');
-    Route::get('payments/{payment}', [AdminController::class, 'showPayment'])
-        ->name('admin.payments.show');
 
     /**
      * Utilisateurs (Admins)
@@ -246,14 +209,6 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
         ->name('admin.reports.index');
     Route::get('reports/{report}', [AdminController::class, 'showReport'])
         ->name('admin.reports.show');
-
-    /**
-     * Paramètres / Profil admin
-     */
-    Route::get('profile', [AdminController::class, 'profile'])
-        ->name('admin.profile');
-    Route::put('profile', [AdminController::class, 'updateProfile'])
-        ->name('admin.profile.update');
 
     /**
      * Déconnexion

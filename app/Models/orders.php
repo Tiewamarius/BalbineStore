@@ -11,50 +11,62 @@ class Orders extends Model
 
     protected $fillable = [
         'user_id',
-        'address_id',  // Assurez-vous que cette colonne existe dans la table orders
+        'address_id',
         'order_number',
-        'status',       // pending, paid, shipped, delivered, cancelled
-        'payment_method',
-        'payment_status', // unpaid, paid, refunded
+        'status',          // pending, confirmed, shipped, delivered, cancelled
+        'payment_method',  // cash, card, mobile_money
+        'payment_status',  // unpaid, paid, refunded (résumé)
         'subtotal',
         'shipping_fee',
         'total',
     ];
 
-    /**
-     * Relations
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    */
 
-    // La commande appartient à un utilisateur
+    // Commande → Client
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // La commande est liée à une adresse de livraison ou facturation
+    // Commande → Adresse
     public function address()
     {
-        return $this->belongsTo(Addresses::class);  // Assurez-vous que la table address existe
+        return $this->belongsTo(Addresses::class);
     }
 
-    // Une commande contient plusieurs articles
+    // Commande → Articles
     public function items()
     {
         return $this->hasMany(OrderItems::class, 'order_id');
     }
 
-    /**
-     * Accessors
-     */
+    // ✅ Commande → Paiement (IMPORTANT)
+    public function payment()
+    {
+        return $this->hasOne(payments::class, 'order_id');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACCESSORS
+    |--------------------------------------------------------------------------
+    */
 
     public function getFormattedTotalAttribute()
     {
         return number_format($this->total, 0, ',', ' ') . ' FCFA';
     }
 
-    /**
-     * Scopes
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | SCOPES
+    |--------------------------------------------------------------------------
+    */
 
     public function scopePaid($query)
     {
@@ -66,12 +78,28 @@ class Orders extends Model
         return $query->where('status', 'delivered');
     }
 
-    /**
-     * Méthodes utilitaires
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | HELPERS / MÉTIER
+    |--------------------------------------------------------------------------
+    */
 
     public static function generateOrderNumber()
     {
         return 'CMD-' . strtoupper(uniqid());
+    }
+
+    // ✅ Synchronisation paiement <-> commande
+    public function markAsPaid()
+    {
+        $this->update([
+            'payment_status' => 'paid'
+        ]);
+
+        if ($this->payment) {
+            $this->payment->update([
+                'status' => 'completed'
+            ]);
+        }
     }
 }
